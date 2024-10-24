@@ -5,7 +5,7 @@ This file uses Mark Down syntax. For more information see [here](https://www.mar
 
 [//]: # (TODO: Fill inn your name and student ID)
 
-STUDENT NAME = "Your name"  
+STUDENT NAME = Cecilie Vu  
 STUDENT ID = "Your ID"
 
 ## Project description
