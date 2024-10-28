@@ -85,8 +85,6 @@ public class Main {
                     CreateItem foundItem = foodstorage.searchItem(nameToFind);
                     if(foundItem == null) {
                         System.out.println(nameToFind + " does not exist in the fridge");
-                    } else {
-                        System.out.println(nameToFind + " exist in the fridge.");
                     }
                     break;
 

@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Optional;
 import java.time.LocalDate; //nyerer versjon enn util.date
 
@@ -85,7 +86,8 @@ public class FoodStorage {
     public Optional<CreateItem> findLatestItem(String name) {
         return items.stream()
                 .filter(item -> item.getNameItem().equalsIgnoreCase(name)) //lamda-uttrykk, obs sjekk ut mer om dette
-                .findFirst();
+                .max(Comparator.comparing(CreateItem::getBestBefore)
+                .thenComparing(CreateItem::getPricePerUnit));
     }
 
     /**
