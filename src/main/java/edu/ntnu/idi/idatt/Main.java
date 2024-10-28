@@ -27,6 +27,7 @@ public class Main {
 
             switch(valg) {
                 case 1:
+                    foodstorage.sortItemByDate();
                     foodstorage.showItem();
                     break;
 
@@ -34,9 +35,9 @@ public class Main {
                     System.out.println("Type name of the new item: ");
                     String nameItem = scanner.nextLine();
 
-                    Optional<CreateItem> exsistingItem = foodstorage.findLatestItem(nameItem);
+                    Optional<Ingredient> exsistingItem = foodstorage.findLatestItem(nameItem);
                     if(exsistingItem.isPresent()) {
-                        CreateItem item = exsistingItem.get();
+                        Ingredient item = exsistingItem.get();
                         System.out.println("Previous entry found for " + nameItem + ":");
                         System.out.println("Best before date: " + exsistingItem.get().getBestBefore().format(dateFormat));
                         System.out.println("Price per unit: " + exsistingItem.get().getPricePerUnit());
@@ -64,7 +65,7 @@ public class Main {
                         break;
                     }
 
-                    CreateItem newItem = new CreateItem(nameItem, quantityItem, unitItem, pricePerUnit, bestBefore);
+                    Ingredient newItem = new Ingredient(nameItem, quantityItem, unitItem, pricePerUnit, bestBefore);
                     foodstorage.addItem(newItem);
                     break;
 
@@ -82,7 +83,7 @@ public class Main {
                 case 4:
                     System.out.println("Write item: ");
                     String nameToFind = scanner.nextLine();
-                    CreateItem foundItem = foodstorage.searchItem(nameToFind);
+                    Ingredient foundItem = foodstorage.searchItem(nameToFind);
                     if(foundItem == null) {
                         System.out.println(nameToFind + " does not exist in the fridge");
                     }
@@ -100,6 +101,8 @@ public class Main {
                 case 7:
                     System.out.println("Ending program...");
                     return;
+                default:
+                    System.out.println("Invalid choice");
             }
         }
 

@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt;
 
 import java.time.LocalDate;
 
-public class CreateItem {
+public class Ingredient {
     //attributes
     private String nameItem;
     private double quantityItem;
@@ -13,7 +13,7 @@ public class CreateItem {
     /**
      * Konstruktør som oppretter this. objekter
      */
-    public CreateItem(String nameItem, double quantityItem, String unitItem, double pricePerUnit, LocalDate bestBefore) {
+    public Ingredient(String nameItem, double quantityItem, String unitItem, double pricePerUnit, LocalDate bestBefore) {
         this.nameItem = nameItem;
         this.quantityItem = quantityItem;
         this.unitItem = unitItem;

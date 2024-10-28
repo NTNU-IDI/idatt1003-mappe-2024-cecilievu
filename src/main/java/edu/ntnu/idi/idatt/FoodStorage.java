@@ -7,7 +7,7 @@ import java.time.LocalDate; //nyerer versjon enn util.date
 
 public class FoodStorage {
     //attributes med array list for varer i kjøleskap
-    private ArrayList<CreateItem> items;
+    private ArrayList<Ingredient>items;
 
     /**
      * Konstruktør som skal ta inn alle varene i en liste
@@ -22,9 +22,9 @@ public class FoodStorage {
      * dato + pris, hvis ikke blir det lagt til som ny vare
      * @param newItem ny vare
      */
-    public void addItem(CreateItem newItem) {
+    public void addItem(Ingredient newItem) {
         boolean itemExsist = false;
-        for(CreateItem item : items) {
+        for(Ingredient item : items) {
             if(item.getNameItem().equalsIgnoreCase(newItem.getNameItem()) && item.getBestBefore().equals(newItem.getBestBefore()) && item.getPricePerUnit() == newItem.getPricePerUnit()) {
                 item.setQuantityItem(item.getQuantityItem() + newItem.getQuantityItem());
                 System.out.println(newItem.getQuantityItem() + " " + newItem.getUnitItem() + " of " + newItem.getNameItem() + " has been added to exsisting item in the fridge.");
@@ -54,10 +54,17 @@ public class FoodStorage {
             System.out.println("The fridge is empty");
         } else {
             System.out.println("Items in the fridge:");
-            for (CreateItem item : items) {
+            for (Ingredient item : items) {
                 System.out.println(item);
             }
         }
+    }
+
+    /**
+     * metode for å sortere varene etter dato, util.compare
+     */
+    public void sortItemByDate() {
+        items.sort((Comparator.comparing(Ingredient::getBestBefore)));
     }
 
     /**
@@ -65,8 +72,8 @@ public class FoodStorage {
      * @param name navnet på varen man ønsker å finne
      * @return returnerer vare dersom den finnes, hvis ikke null
      */
-    public CreateItem searchItem(String name) {
-        for(CreateItem item : items) {
+    public Ingredient searchItem(String name) {
+        for(Ingredient item : items) {
             if(item.getNameItem().equalsIgnoreCase(name)) { //equalsIgnoreCase gjør den case-insensitiv
                 System.out.println("Item found in the fridge: " + item.getNameItem() + ", quantity of item: "
                         + item.getQuantityItem() + " " + item.getUnitItem());
@@ -80,14 +87,14 @@ public class FoodStorage {
     /**
      * lager en optional-klass metode for å hente verdier som er blitt skrevet tidliger
      * den søker gjennom listen items etter elementer som har samme navn og returnerer det
+     * endret til reduce istedenfor compare for å få den sist registrerte
      * @param name navnet på varen
      * @return returnerer et optional-objekt som enten inneholder en CreateItem eller er tom
      */
-    public Optional<CreateItem> findLatestItem(String name) {
+    public Optional<Ingredient> findLatestItem(String name) {
         return items.stream()
                 .filter(item -> item.getNameItem().equalsIgnoreCase(name)) //lamda-uttrykk, obs sjekk ut mer om dette
-                .max(Comparator.comparing(CreateItem::getBestBefore)
-                .thenComparing(CreateItem::getPricePerUnit));
+                .reduce((first, second) -> second); //betyr at vi alltid beholder det siste elementet vi finner
     }
 
     /**
@@ -96,7 +103,7 @@ public class FoodStorage {
      * @param quantity mengde av varen
      */
     public void removeItem(String name, double quantity) {
-        CreateItem item = searchItem(name);
+        Ingredient item = searchItem(name);
         if(item != null) {
             if(item.getQuantityItem() >= quantity) {
                 item.setQuantityItem(item.getQuantityItem() - quantity);
@@ -117,7 +124,7 @@ public class FoodStorage {
         double totalValue = 0; //lokale verdier
         boolean hasExpiredItems = false; //lokale verdier
         System.out.println("Expired items: ");
-        for (CreateItem item : items) {
+        for (Ingredient item : items) {
             if (item.getBestBefore().isBefore(today)) {
                 System.out.println(item); //printer ut varene som er gått ut av dato
                 totalValue += item.getQuantityItem() * item.getPricePerUnit(); //beregner verdien av varene som har gått ut av dato
@@ -138,7 +145,7 @@ public class FoodStorage {
      */
     public double calculateTotalValue() {
         double totalValue = 0;
-        for (CreateItem item : items) {
+        for (Ingredient item : items) {
             totalValue += item.getQuantityItem() * item.getPricePerUnit();
         }
         return totalValue;
