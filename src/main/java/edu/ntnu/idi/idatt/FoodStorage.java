@@ -61,10 +61,11 @@ public class FoodStorage {
     }
 
     /**
-     * metode for å sortere varene etter dato, util.compare
+     * metode for å sortere varene etter dato OG navn, util.compare
      */
-    public void sortItemByDate() {
-        items.sort((Comparator.comparing(Ingredient::getBestBefore)));
+    public void sortItemByNameAndDate() {
+        items.sort((Comparator.comparing(Ingredient::getNameItem))
+                .thenComparing(Ingredient::getBestBefore));
     }
 
     /**

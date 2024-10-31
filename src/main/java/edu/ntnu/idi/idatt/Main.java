@@ -27,7 +27,7 @@ public class Main {
 
             switch(valg) {
                 case 1:
-                    foodstorage.sortItemByDate();
+                    foodstorage.sortItemByNameAndDate();
                     foodstorage.showItem();
                     break;
 
