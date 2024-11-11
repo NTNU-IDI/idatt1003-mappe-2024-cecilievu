@@ -29,13 +29,6 @@ public class Ingredient {
         return nameItem;
     }
 
-    /**
-     * Setter navn på varen
-     * @param nameItem navnet på varen
-     */
-    public void setNameItem(String nameItem) {
-        this.nameItem = nameItem;
-    }
 
     /**
      * Henter mengde for varen
@@ -66,13 +59,6 @@ public class Ingredient {
         return unitItem;
     }
 
-    /**
-     * Setter enhet for varen
-     * @param unitItem enhet av varen
-     */
-    public void setUnitItem(String unitItem) {
-        this.unitItem = unitItem;
-    }
 
     /**
      * Henter pris per enhet for varen
@@ -97,19 +83,12 @@ public class Ingredient {
 
     /**
      * Henter best-før-dato av varen
-     * @return best-før-dato
+     * @return best-før-dato dd-MM-yyyy
      */
     public LocalDate getBestBefore() {
         return bestBefore;
     }
 
-    /**
-     * Setter best-før-dato til varen
-     * @param bestBefore best-før-dato
-     */
-    public void setBestBefore(LocalDate bestBefore) {
-        this.bestBefore = bestBefore;
-    }
 
     //
     @Override

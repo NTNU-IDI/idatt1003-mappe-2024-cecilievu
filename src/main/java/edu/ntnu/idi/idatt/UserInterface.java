@@ -21,7 +21,7 @@ public class UserInterface {
     public void init() {
         scanner = new Scanner(System.in);
         foodStorage = new FoodStorage();
-        dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     }
 
     /**
