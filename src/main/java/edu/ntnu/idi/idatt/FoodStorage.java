@@ -100,22 +100,42 @@ public class FoodStorage {
 
     /**
      * Metode for å fjerne en vare
+     * NY! oppdaterer den så den sorterer varene ut ifra dato og trekker fra de varene som går ut først
      * @param name navnet på varen
      * @param quantity mengde av varen
      */
     public void removeItem(String name, double quantity) {
-        Ingredient item = searchItem(name);
-        if(item != null) {
-            if(item.getQuantityItem() >= quantity) {
-                item.setQuantityItem(item.getQuantityItem() - quantity);
-                System.out.println(quantity + " " + item.getUnitItem() + " of " + name + " is removed from the fridge.");
-            } else {
-                System.out.println("Not enough quantity of " + name + " to remove");
+        double remainingQuantity = quantity;
+        items.sort(Comparator.comparing(Ingredient::getBestBefore)); //sortere items by best before
+        for(Ingredient item : items) {
+            if(remainingQuantity <= 0) break;
+
+            //ny løkke som itererer gjennom de ulike items for å ta ut varen som går ut av dato førts
+            for(Ingredient items : items) {
+                if(remainingQuantity <= 0) break;
+
+                if(item.getNameItem().equalsIgnoreCase(name)) {
+                    if(item.getQuantityItem() >= remainingQuantity) {
+                        item.setQuantityItem(item.getQuantityItem() - remainingQuantity);
+
+                    }
+                }
             }
-        } else {
-            System.out.println(name + " does not exist in the fridge");
         }
     }
+
+        //Ingredient item = searchItem(name);
+        //if(item != null) {
+            //if(item.getQuantityItem() >= quantity) {
+                //item.setQuantityItem(item.getQuantityItem() - quantity);
+                //System.out.println(quantity + " " + item.getUnitItem() + " of " + name + " is removed from the fridge.");
+            //} else {
+                //System.out.println("Not enough quantity of " + name + " to remove");
+            //}
+        //} else {
+            //System.out.println(name + " does not exist in the fridge");
+        //}
+    //}
 
     /**
      * Metode for å vise varer som har gått ut av dato samt verdi av disse
