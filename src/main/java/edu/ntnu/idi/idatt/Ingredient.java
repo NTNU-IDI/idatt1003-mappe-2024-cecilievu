@@ -2,8 +2,11 @@ package edu.ntnu.idi.idatt;
 
 import java.time.LocalDate;
 
+/**
+ * Represents an ingredient with attributes such as name, quantity, unit, price and best-before date.
+ */
 public class Ingredient {
-    //attributes
+    // Attributes
     private String nameItem;
     private double quantityItem;
     private String unitItem;
@@ -11,7 +14,7 @@ public class Ingredient {
     private LocalDate bestBefore;
 
     /**
-     * Konstruktør som oppretter this. objekter
+     * Constructor that initializes an ingredient with the give attributes
      */
     public Ingredient(String nameItem, double quantityItem, String unitItem, double pricePerUnit, LocalDate bestBefore) {
         this.nameItem = nameItem;
@@ -22,29 +25,31 @@ public class Ingredient {
     }
 
     /**
-     * Henter navnet på varen
-     * @return navnet på varen
+     * Gets the name of the item
+     *
+     * @return the name of the item
      */
     public String getNameItem() {
         return nameItem;
     }
 
-
     /**
-     * Henter mengde for varen
-     * @return mengde av varen
+     * Gets the quantity for the item
+     *
+     * @return the quantity of the item
      */
-    public double getQuantityItem () {
+    public double getQuantityItem() {
         return quantityItem;
     }
 
     /**
-     * Setter mengden for varen
-     * @param quantityItem mengden av varen
-     * @throws IllegalArgumentException hvis man skriver inn et negativt tall
+     * Sets the quantity of the item
+     *
+     * @param quantityItem the new quantity of the item
+     * @throws IllegalArgumentException if the quantity is negative
      */
-    public void setQuantityItem (double quantityItem) {
-        if(quantityItem > 0) {
+    public void setQuantityItem(double quantityItem) {
+        if (quantityItem > 0) {
             this.quantityItem = quantityItem;
         } else {
             throw new IllegalArgumentException("Quanity cannot be negative");
@@ -52,45 +57,37 @@ public class Ingredient {
     }
 
     /**
-     * Henter enhet for varen
-     * @return enhet av varen
+     * Gets the unit of the item
+     *
+     * @return the unit of the item
      */
     public String getUnitItem() {
         return unitItem;
     }
 
-
     /**
-     * Henter pris per enhet for varen
-     * @return pris per enhet for varen
+     * Gets the price for the item
+     *
+     * @return the price per unit of the item
      */
     public double getPricePerUnit() {
         return pricePerUnit;
     }
 
     /**
-     * Skriver inn pris per enhet
-     * @param pricePerUnit pris per enhet
-     * @throws IllegalArgumentException dersom man skriver inn negativt tall
-     */
-    public void setPricePerUnit(double pricePerUnit) {
-        if(pricePerUnit > 0) {
-            this.pricePerUnit = pricePerUnit;
-        } else {
-            throw new IllegalArgumentException("Price per unit cannot be negative");
-        }
-    }
-
-    /**
-     * Henter best-før-dato av varen
-     * @return best-før-dato dd-MM-yyyy
+     * Gets the best-before date of the item
+     *
+     * @return the best-before date
      */
     public LocalDate getBestBefore() {
         return bestBefore;
     }
 
-
-    //
+    /**
+     * Returns a string representation of the ingredient
+     *
+     * @return a string that contains the name, quanity, price per unit and best-before date of the item.
+     */
     @Override
     public String toString() {
         return "Name of item: " + nameItem + ", quantity: " + quantityItem + " " + unitItem + "\n" +
