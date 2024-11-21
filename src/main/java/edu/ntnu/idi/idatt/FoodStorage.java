@@ -1,56 +1,56 @@
 package edu.ntnu.idi.idatt;
 
+import java.time.LocalDate; //Newer version than util.date (help from Co-pilot)
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
-import java.time.LocalDate; //nyerer versjon enn util.date
 
+/**
+ * This class represent a "food storage" that manages items in a fridge.
+ */
 public class FoodStorage {
-    //attributes med array list for varer i kjøleskap
-    private ArrayList<Ingredient>items;
+    /**
+     * A list of items in the fridge.
+     */
+    private ArrayList<Ingredient> items;
 
     /**
-     * Konstruktør som skal ta inn alle varene i en liste
+     * Constructor that initializes the food storage with an empty list of items.
      */
     public FoodStorage() {
         this.items = new ArrayList<>();
     }
 
+    //Co-pilot
+
     /**
-     * Metode for å legge til ny vare
-     * Legger også til at dersom du ønsker å legge til en eksisterende vare så sjekker den om den har lik
-     * dato + pris, hvis ikke blir det lagt til som ny vare
-     * @param newItem ny vare
+     * Adds new items to the food storage.
+     * If an item has the same name, best before date and price, it will be added to an existing item and their quantities.
+     * Otherwise, the item will be added as a new entry.
+     *
+     * @param newItem the item to be added
      */
     public void addItem(Ingredient newItem) {
         boolean itemExsist = false;
-        for(Ingredient item : items) {
-            if(item.getNameItem().equalsIgnoreCase(newItem.getNameItem()) && item.getBestBefore().equals(newItem.getBestBefore()) && item.getPricePerUnit() == newItem.getPricePerUnit()) {
+        for (Ingredient item : items) {
+            if (item.getNameItem().equalsIgnoreCase(newItem.getNameItem()) && item.getBestBefore().equals(newItem.getBestBefore()) && item.getPricePerUnit() == newItem.getPricePerUnit()) {
                 item.setQuantityItem(item.getQuantityItem() + newItem.getQuantityItem());
                 System.out.println(newItem.getQuantityItem() + " " + newItem.getUnitItem() + " of " + newItem.getNameItem() + " has been added to exsisting item in the fridge.");
                 itemExsist = true;
                 break;
             }
         }
-        if(!itemExsist) {
+        if (!itemExsist) {
             items.add(newItem);
             System.out.println(newItem.getNameItem() + " has been added to the fridge.");
         }
-        //CreateItem exsistingItem = searchItem(newItem.getNameItem());
-        //if (exsistingItem != null) {
-        //exsistingItem.setQuantityItem(exsistingItem.getQuantityItem() + newItem.getQuantityItem());
-        //System.out.println(newItem.getQuantityItem() + " has been added to the exsisting item in the fridge.");
-        //} else {
-        //items.add(newItem);
-        //System.out.println(newItem.getNameItem() + " is added to the fridge");
-        //}
     }
 
     /**
-     * Metode for å vise varene i kjøleskapet
+     * Displays all items in the fridge
      */
     public void showItem() {
-        if(items.isEmpty()) {
+        if (items.isEmpty()) {
             System.out.println("The fridge is empty");
         } else {
             System.out.println("Items in the fridge:");
@@ -61,7 +61,7 @@ public class FoodStorage {
     }
 
     /**
-     * metode for å sortere varene etter dato OG navn, util.compare
+     * Sorting items in the fridge by name and date
      */
     public void sortItemByNameAndDate() {
         items.sort((Comparator.comparing(Ingredient::getNameItem))
@@ -69,13 +69,14 @@ public class FoodStorage {
     }
 
     /**
-     * Metode for å søke etter en spesifikk vare
-     * @param name navnet på varen man ønsker å finne
-     * @return returnerer vare dersom den finnes, hvis ikke null
+     * Searching for a specific item in the fridge
+     *
+     * @param name the name of the item to search for
+     * @return the item if found, or null if not
      */
     public Ingredient searchItem(String name) {
-        for(Ingredient item : items) {
-            if(item.getNameItem().equalsIgnoreCase(name)) { //equalsIgnoreCase gjør den case-insensitiv
+        for (Ingredient item : items) {
+            if (item.getNameItem().equalsIgnoreCase(name)) { //equalsIgnoreCase gjør den case-insensitiv
                 System.out.println("Item found in the fridge: " + item.getNameItem() + ", quantity of item: "
                         + item.getQuantityItem() + " " + item.getUnitItem());
                 return item;
@@ -86,11 +87,10 @@ public class FoodStorage {
     }
 
     /**
-     * lager en optional-klass metode for å hente verdier som er blitt skrevet tidliger
-     * den søker gjennom listen items etter elementer som har samme navn og returnerer det
-     * endret til reduce istedenfor compare for å få den sist registrerte
-     * @param name navnet på varen
-     * @return returnerer et optional-objekt som enten inneholder en CreateItem eller er tom
+     * Optional to find the latest added item with the specified name.
+     *
+     * @param name the name of the item
+     * @return an Optional containing the latest item, or empty if not found
      */
     public Optional<Ingredient> findLatestItem(String name) {
         return items.stream()
@@ -99,23 +99,23 @@ public class FoodStorage {
     }
 
     /**
-     * Metode for å fjerne en vare
-     * NY! oppdaterer den så den sorterer varene ut ifra dato og trekker fra de varene som går ut først
-     * @param name navnet på varen
-     * @param quantity mengde av varen
+     * Removes a specific item from the fridge, starting with the earliest expiry date.
+     *
+     * @param name     the name of the item to remove
+     * @param quantity the quantity of the item to remove
      */
     public void removeItem(String name, double quantity) {
         double remainingQuantity = quantity;
         items.sort(Comparator.comparing(Ingredient::getBestBefore)); //sortere items by best before
-        for(Ingredient item : items) {
-            if(remainingQuantity <= 0) break;
+        for (Ingredient item : items) {
+            if (remainingQuantity <= 0) break;
 
             //ny løkke som itererer gjennom de ulike items for å ta ut varen som går ut av dato førts
-            for(Ingredient items : items) {
-                if(remainingQuantity <= 0) break;
+            for (Ingredient items : items) {
+                if (remainingQuantity <= 0) break;
 
-                if(item.getNameItem().equalsIgnoreCase(name)) {
-                    if(item.getQuantityItem() >= remainingQuantity) {
+                if (item.getNameItem().equalsIgnoreCase(name)) {
+                    if (item.getQuantityItem() >= remainingQuantity) {
                         item.setQuantityItem(item.getQuantityItem() - remainingQuantity);
 
                     }
@@ -124,21 +124,8 @@ public class FoodStorage {
         }
     }
 
-        //Ingredient item = searchItem(name);
-        //if(item != null) {
-            //if(item.getQuantityItem() >= quantity) {
-                //item.setQuantityItem(item.getQuantityItem() - quantity);
-                //System.out.println(quantity + " " + item.getUnitItem() + " of " + name + " is removed from the fridge.");
-            //} else {
-                //System.out.println("Not enough quantity of " + name + " to remove");
-            //}
-        //} else {
-            //System.out.println(name + " does not exist in the fridge");
-        //}
-    //}
-
     /**
-     * Metode for å vise varer som har gått ut av dato samt verdi av disse
+     * Shows expired items along with their total value
      */
     public void showExpiredItems() {
         LocalDate today = LocalDate.now();
@@ -152,7 +139,7 @@ public class FoodStorage {
                 hasExpiredItems = true;
             }
         }
-        if(!hasExpiredItems) {
+        if (!hasExpiredItems) {
             System.out.println("No items have expired! :)");
         } else {
             System.out.println("Total value of expired items: " + totalValue + " kr");
@@ -161,8 +148,9 @@ public class FoodStorage {
     }
 
     /**
-     * Metode som beregner totalverdien av alle varene i kjøleskapet
-     * @return totalverdi
+     * Calculates the total value of all items in the fridge
+     *
+     * @return the total valye
      */
     public double calculateTotalValue() {
         double totalValue = 0;
