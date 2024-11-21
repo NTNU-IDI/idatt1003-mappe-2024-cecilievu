@@ -17,11 +17,20 @@ public class UserInterface {
      * - her oppretter den scanner til bruker
      * - initaliserer et foodStorage objekt
      * - setter opp en DateTimeFormatter for å håndtere datoformatering
+     * - la inn et par Ingredient så jeg slipper å skrive de inn hver gang programmet kjøres
      */
     public void init() {
         scanner = new Scanner(System.in);
         foodStorage = new FoodStorage();
         dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        Ingredient ingredient1 = new Ingredient("Egg", 12, "pieces", 2.0, LocalDate.of(2024, 12, 24));
+        foodStorage.addItem(ingredient1);
+        Ingredient ingredient2 = new Ingredient( "Milk", 3, "L", 10.0, LocalDate.of(2024,12,24));
+        foodStorage.addItem(ingredient2);
+        Ingredient ingredient3 = new Ingredient("Butter", 250, "grams", 0.1, LocalDate.of(2024,12,24));
+        foodStorage.addItem(ingredient3);
+        Ingredient ingredient4 = new Ingredient("Flour", 1000, "grams",0.03, LocalDate.of(2024,12,24) );
     }
 
     /**
@@ -29,7 +38,7 @@ public class UserInterface {
      */
     public void start() {
         while(true) {
-            System.out.println("Menu1");
+            System.out.println("======== Menu1 ========");
             System.out.println("1. Show items in fridge");
             System.out.println("2. Add new item");
             System.out.println("3. Remove item");
@@ -37,10 +46,10 @@ public class UserInterface {
             System.out.println("5. Show expired items");
             System.out.println("6. Show total value of items in fridge");
             System.out.println("7. End program");
-            int valg = scanner.nextInt();
+            int choice = scanner.nextInt();
             scanner.nextLine();
 
-            switch(valg) {
+            switch(choice) {
                 case 1:
                     foodStorage.sortItemByNameAndDate();
                     foodStorage.showItem();
