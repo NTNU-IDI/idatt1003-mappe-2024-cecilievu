@@ -4,6 +4,7 @@ import java.time.LocalDate; //Newer version than util.date (help from Co-pilot)
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.*;
 
 /**
  * This class represent a "food storage" that manages items in a fridge.
@@ -31,19 +32,19 @@ public class FoodStorage {
      * @param newItem the item to be added
      */
     public void addItem(Ingredient newItem) {
-        boolean itemExsist = false;
-        for (Ingredient item : items) {
-            if (item.getNameItem().equalsIgnoreCase(newItem.getNameItem()) && item.getBestBefore().equals(newItem.getBestBefore()) && item.getPricePerUnit() == newItem.getPricePerUnit()) {
-                item.setQuantityItem(item.getQuantityItem() + newItem.getQuantityItem());
-                System.out.println(newItem.getQuantityItem() + " " + newItem.getUnitItem() + " of " + newItem.getNameItem() + " has been added to exsisting item in the fridge.");
-                itemExsist = true;
-                break;
-            }
-        }
-        if (!itemExsist) {
-            items.add(newItem);
-            System.out.println(newItem.getNameItem() + " has been added to the fridge.");
-        }
+        items.stream()
+                .filter(item -> item.getNameItem().equalsIgnoreCase(newItem.getNameItem())
+                        && item.getBestBefore().equals(newItem.getBestBefore())
+                        && item.getPricePerUnit() == newItem.getPricePerUnit())
+                .findFirst()
+                .ifPresentOrElse(
+                        item -> item.setQuantityItem(item.getQuantityItem() + newItem.getQuantityItem()), // Updates quantity
+                        () -> items.add(newItem) // Add new item
+                );
+
+        System.out.println(newItem.getQuantityItem() + " " + newItem.getUnitItem() +
+                " of " + newItem.getNameItem() +
+                (items.contains(newItem) ? " has been added to an existing item in the fridge." : " has been added to the fridge."));
     }
 
     /**
@@ -74,16 +75,11 @@ public class FoodStorage {
      * @param name the name of the item to search for
      * @return the item if found, or null if not
      */
-    public Ingredient searchItem(String name) {
-        for (Ingredient item : items) {
-            if (item.getNameItem().equalsIgnoreCase(name)) { //equalsIgnoreCase gjør den case-insensitiv
-                System.out.println("Item found in the fridge: " + item.getNameItem() + ", quantity of item: "
-                        + item.getQuantityItem() + " " + item.getUnitItem());
-                return item;
-            }
-        }
-        //System.out.println("Item not found in fridge: " + name);
-        return null;
+    public Ingredient searchItem(String name){
+        return items.stream()
+                .filter(item -> item.getNameItem().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -92,7 +88,7 @@ public class FoodStorage {
      * @param name the name of the item
      * @return an Optional containing the latest item, or empty if not found
      */
-    public Optional<Ingredient> findLatestItem(String name) {
+    public Optional<Ingredient> findLatestItem (String name){
         return items.stream()
                 .filter(item -> item.getNameItem().equalsIgnoreCase(name)) //lamda-uttrykk, obs sjekk ut mer om dette
                 .reduce((first, second) -> second); //betyr at vi alltid beholder det siste elementet vi finner
@@ -104,7 +100,7 @@ public class FoodStorage {
      * @param name     the name of the item to remove
      * @param quantity the quantity of the item to remove
      */
-    public void removeItem(String name, double quantity) {
+    public void removeItem(String name, double quantity){
         double remainingQuantity = quantity;
         items.sort(Comparator.comparing(Ingredient::getBestBefore)); //sortere items by best before
         for (Ingredient item : items) {
@@ -160,3 +156,4 @@ public class FoodStorage {
         return totalValue;
     }
 }
+
