@@ -20,9 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *     <li>Accessor-method skal returnere riktig unit</li>
  * </ul>
  */
-public class IngredientTest {
+
+public class TestIngredient {
     @Test
-    public void CreateIngredientTest() {
+    public void testCreateIngredientWithValidParameters() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate bestBeforeDate = LocalDate.parse("01-11-2024", formatter);
         Ingredient ingredient = new Ingredient("Egg", 12, "pieces", 2.0, bestBeforeDate);
@@ -32,6 +33,18 @@ public class IngredientTest {
         assertEquals("pieces", ingredient.getUnitItem());
         assertEquals(2.0, ingredient.getPricePerUnit());
         assertEquals(bestBeforeDate, ingredient.getBestBefore());
+    }
+
+    @Test public void testSetQuantityItemValidValue() {
+        Ingredient ingredient = new Ingredient("Milk", 1.5, "L", 13.3, LocalDate.now().plusDays(10));
+        ingredient.setQuantityItem(10);
+        assertEquals(10, ingredient.getQuantityItem());
+    }
+
+    //negativ test
+    @Test public void testSetQuantityItemInvalidValue() {
+        Ingredient ingredient = new Ingredient("Milk", 1.5, "L", 13.3, LocalDate.now());
+        assertThrows(IllegalArgumentException.class, () -> ingredient.setQuantityItem(-5));
     }
 
 }
