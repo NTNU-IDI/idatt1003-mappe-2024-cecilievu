@@ -26,7 +26,8 @@ public class FoodStorage {
 
     /**
      * Adds new items to the food storage.
-     * If an item has the same name, best before date and price, it will be added to an existing item and their quantities.
+     * If an item has the same name, best before date and price,
+     * it will be added to an existing item and their quantities.
      * Otherwise, the item will be added as a new entry.
      *
      * @param newItem the item to be added
@@ -42,14 +43,14 @@ public class FoodStorage {
                         () -> items.add(newItem) // Add new item
                 );
 
-        System.out.println(newItem.getQuantityItem() + " " + newItem.getUnitItem() +
-                " of " + newItem.getNameItem() +
-                (items.contains(newItem) ? " has been added to an existing item in the fridge." : " has been added to the fridge."));
+        System.out.println(newItem.getQuantityItem() + " " + newItem.getUnitItem()
+                + " of " + newItem.getNameItem()
+                + (items.contains(newItem) ? " has been added to an existing item in the fridge." : " has been added to the fridge."));
     }
 
     /**
      * Displays all items in the fridge,
-     * sorted after name and date
+     * sorted after name and date.
      */
     public void showItem() {
         if (items.isEmpty()) {
@@ -60,7 +61,7 @@ public class FoodStorage {
             System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
             System.out.println("----------------------------------------------------------------");
             items.stream()
-                    .sorted(Comparator.comparing(Ingredient::getNameItem)
+                    .sorted(Comparator.comparing((Ingredient item) -> item.getNameItem().toLowerCase())
                             .thenComparing(Ingredient::getBestBefore))
                     .forEach(item -> {
                         String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
@@ -104,23 +105,23 @@ public class FoodStorage {
      * @param quantity the quantity of the item to remove
      */
     public void removeItem(String name, double quantity){
-        double remainingQuantity = quantity;
-        items.sort(Comparator.comparing(Ingredient::getBestBefore)); //sortere items by best before
-        for (Ingredient item : items) {
-            if (remainingQuantity <= 0) break;
-
-            //ny løkke som itererer gjennom de ulike items for å ta ut varen som går ut av dato først
-            for (Ingredient items : items) {
-                if (remainingQuantity <= 0) break;
-
-                if (item.getNameItem().equalsIgnoreCase(name)) {
-                    if (item.getQuantityItem() >= remainingQuantity) {
-                        item.setQuantityItem(item.getQuantityItem() - remainingQuantity);
-
-                    }
+        items.sort(Comparator.comparing(Ingredient::getBestBefore));
+        for (var iterator = items.iterator(); iterator.hasNext(); ) {
+            Ingredient item = iterator.next();
+            if (item.getNameItem().equalsIgnoreCase(name)) {
+                if (item.getQuantityItem() > quantity) {
+                    item.setQuantityItem(item.getQuantityItem() - quantity);
+                    return;
+                } else {
+                    quantity -= item.getQuantityItem();
+                    iterator.remove();
+                }
+                if (quantity <= 0) {
+                    return;
                 }
             }
         }
+        System.out.println("Not enough " + name + " in stock to remove " + quantity);
     }
 
     //Chat
