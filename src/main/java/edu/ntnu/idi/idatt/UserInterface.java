@@ -1,10 +1,10 @@
 package edu.ntnu.idi.idatt;
 
-import java.util.Optional; //klasse som henter tidligere verdier
+import java.util.Optional;
 import java.util.Scanner;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter; //klasse som brukes til å formatere og parse dato i java. Lar den definere dato som dd-MM-yyyy
-import java.time.format.DateTimeParseException; //unntaksklasse som brukes til å indikere om det oppstår feil under parsing av dato, eks du skriver MM-dd-yyyy
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 //Variabler som skal initaliserers inn i init()-metoden
 public class UserInterface {
@@ -31,6 +31,7 @@ public class UserInterface {
         Ingredient ingredient3 = new Ingredient("Butter", 250, "grams", 0.1, LocalDate.of(2024,12,24));
         foodStorage.addItem(ingredient3);
         Ingredient ingredient4 = new Ingredient("Flour", 1000, "grams",0.03, LocalDate.of(2024,12,24) );
+        foodStorage.addItem(ingredient4);
     }
 
     /**
@@ -51,7 +52,6 @@ public class UserInterface {
 
             switch(choice) {
                 case 1:
-                    foodStorage.sortItemByNameAndDate();
                     foodStorage.showItem();
                     break;
 
@@ -106,7 +106,9 @@ public class UserInterface {
                     String nameToFind = scanner.nextLine();
                     Ingredient foundItem = foodStorage.searchItem(nameToFind);
                     if(foundItem == null) {
-                        System.out.println(nameToFind + " does not exist in the fridge");
+                        System.out.println("Item not found");
+                    } else {
+                        System.out.println("Found item: " + foundItem.getNameItem());
                     }
                     break;
 
