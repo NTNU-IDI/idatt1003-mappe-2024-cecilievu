@@ -48,25 +48,28 @@ public class FoodStorage {
     }
 
     /**
-     * Displays all items in the fridge
+     * Displays all items in the fridge,
+     * sorted after name and date
      */
     public void showItem() {
         if (items.isEmpty()) {
             System.out.println("The fridge is empty");
         } else {
             System.out.println("Items in the fridge:");
-            for (Ingredient item : items) {
-                System.out.println(item);
-            }
+            System.out.println();
+            System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
+            System.out.println("----------------------------------------------------------------");
+            items.stream()
+                    .sorted(Comparator.comparing(Ingredient::getNameItem)
+                            .thenComparing(Ingredient::getBestBefore))
+                    .forEach(item -> {
+                        String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
+                                item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
+                        );
+                        System.out.println(formatted);
+                    });
+            System.out.println();
         }
-    }
-
-    /**
-     * Sorting items in the fridge by name and date
-     */
-    public void sortItemByNameAndDate() {
-        items.sort((Comparator.comparing(Ingredient::getNameItem))
-                .thenComparing(Ingredient::getBestBefore));
     }
 
     /**
@@ -90,14 +93,14 @@ public class FoodStorage {
      */
     public Optional<Ingredient> findLatestItem (String name){
         return items.stream()
-                .filter(item -> item.getNameItem().equalsIgnoreCase(name)) //lamda-uttrykk, obs sjekk ut mer om dette
-                .reduce((first, second) -> second); //betyr at vi alltid beholder det siste elementet vi finner
+                .filter(item -> item.getNameItem().equalsIgnoreCase(name))
+                .reduce((first, second) -> second); // betyr at vi alltid beholder det siste elementet vi finner
     }
 
     /**
      * Removes a specific item from the fridge, starting with the earliest expiry date.
      *
-     * @param name     the name of the item to remove
+     * @param name the name of the item to remove
      * @param quantity the quantity of the item to remove
      */
     public void removeItem(String name, double quantity){
@@ -106,7 +109,7 @@ public class FoodStorage {
         for (Ingredient item : items) {
             if (remainingQuantity <= 0) break;
 
-            //ny løkke som itererer gjennom de ulike items for å ta ut varen som går ut av dato førts
+            //ny løkke som itererer gjennom de ulike items for å ta ut varen som går ut av dato først
             for (Ingredient items : items) {
                 if (remainingQuantity <= 0) break;
 
@@ -120,24 +123,25 @@ public class FoodStorage {
         }
     }
 
+    //Chat
     /**
      * Shows expired items along with their total value
      */
     public void showExpiredItems() {
         LocalDate today = LocalDate.now();
-        double totalValue = 0; //lokale verdier
-        boolean hasExpiredItems = false; //lokale verdier
-        System.out.println("Expired items: ");
-        for (Ingredient item : items) {
-            if (item.getBestBefore().isBefore(today)) {
-                System.out.println(item); //printer ut varene som er gått ut av dato
-                totalValue += item.getQuantityItem() * item.getPricePerUnit(); //beregner verdien av varene som har gått ut av dato
-                hasExpiredItems = true;
-            }
-        }
-        if (!hasExpiredItems) {
+
+        ArrayList<Ingredient> expiredItems = items.stream()
+                .filter(item -> item.getBestBefore().isBefore(today)) // Filtrerer ut varer som har gått ut av dato
+                .collect(Collectors.toCollection(ArrayList::new)); // Samler de i en ArrayList
+        if (expiredItems.isEmpty()) {
             System.out.println("No items have expired! :)");
         } else {
+            System.out.println("Expired items:");
+            expiredItems.forEach(System.out::println); // Skriver ut alle utgåtte varer
+
+            double totalValue = expiredItems.stream()
+                    .mapToDouble(item -> item.getQuantityItem() * item.getPricePerUnit())
+                    .sum();
             System.out.println("Total value of expired items: " + totalValue + " kr");
             System.out.println("Before throwing out, LOOK - SMELL - TASTE! Trust your senses, reduce foodwaste! :)");
         }
@@ -149,11 +153,9 @@ public class FoodStorage {
      * @return the total valye
      */
     public double calculateTotalValue() {
-        double totalValue = 0;
-        for (Ingredient item : items) {
-            totalValue += item.getQuantityItem() * item.getPricePerUnit();
-        }
-        return totalValue;
+        return items.stream()
+                .mapToDouble(item -> item.getQuantityItem() * item.getPricePerUnit())
+                .sum();
     }
 }
 
