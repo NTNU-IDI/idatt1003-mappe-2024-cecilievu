@@ -73,7 +73,7 @@ public class UserInterface {
     private Map<MenuOption, Runnable> createActions() {
         Map<MenuOption, Runnable> actions = new HashMap<>();
         actions.put(MenuOption.SHOW_ITEMS, foodStorage::showItem);
-        actions.put(MenuOption.ADD_ITEM, () -> handleAddItem());
+        actions.put(MenuOption.ADD_ITEM, this::handleAddItem);
         actions.put(MenuOption.REMOVE_ITEM, this::handleRemoveItem);
         actions.put(MenuOption.SEARCH_ITEM, this::handleSearchItem);
         actions.put(MenuOption.SHOW_EXPIRED, foodStorage::showExpiredItems);
@@ -83,7 +83,7 @@ public class UserInterface {
 
     // Menyvisning
     private void printMenu() {
-        System.out.println("Menu:");
+        System.out.println("============= Menu =============");
         for (MenuOption option : MenuOption.values()) {
             System.out.printf("%d. %s%n", option.getValue(), option.getDescription()); //
         }
@@ -91,7 +91,6 @@ public class UserInterface {
 
     // Legge til vare
     private void handleAddItem() {
-        scanner.nextLine();
         String name = readString("Type in name of the new item: ");
         double quantity = readDouble("Type quantity of item: ");
         String unit = readString("Type unit of measurement (L, dL, kg, grams or pieces): ");
@@ -103,11 +102,10 @@ public class UserInterface {
 
     // Fjerner varer
     private void handleRemoveItem() {
-        scanner.nextLine();
         String name = readString("Type in the item you want to remove: ");
         double quantity = readDouble("Type in the quantity you want to remove: ");
         foodStorage.removeItem(name, quantity);
-        System.out.println("Item " + name + " is removed!");
+        System.out.println(quantity + " " + name + " is removed!");
     }
 
     // Søke etter varer
@@ -117,7 +115,7 @@ public class UserInterface {
         Ingredient foundItem = foodStorage.searchItem(name);
 
         if (foundItem != null) {
-            System.out.println("Found item: " + foundItem.getNameItem() + ", quanity: " + foundItem.getQuantityItem());
+            System.out.println("Found item: " + foundItem.getNameItem() + ", quantity: " + foundItem.getQuantityItem());
         } else {
             System.out.println("Item not found");
         }
