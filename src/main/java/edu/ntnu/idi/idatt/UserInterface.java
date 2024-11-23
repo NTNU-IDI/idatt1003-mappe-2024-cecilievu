@@ -59,7 +59,7 @@ public class UserInterface {
 
             if (menuOption.isPresent()) {
                 if (menuOption.get() == MenuOption.EXIT) {
-                    System.out.println("Ending program...");
+                    System.out.println("Ending program... Goodbye!");
                     break;
                 }
                 actions.get(menuOption.get()).run(); // Kjør valgt handling
@@ -93,11 +93,9 @@ public class UserInterface {
     private void handleAddItem() {
         scanner.nextLine();
         String name = readString("Type in name of the new item: ");
-        String quantityInput = readString("Type quantity of item: ");
-        double quantity = parseDouble(quantityInput, "Invalid quantity, please enter a valid number: ");
+        double quantity = readDouble("Type quantity of item: ");
         String unit = readString("Type unit of measurement (L, dL, kg, grams or pieces): ");
-        String priceInput = readString("Price per unit: ");
-        double price = parseDouble(priceInput, "Invalid price, please enter a valid number: ");
+        double price = readDouble("Price per unit: ");
         LocalDate bestBefore = readDate("Type in best before date (dd-MM-yyyy): ");
 
         foodStorage.addItem(new Ingredient(name, quantity, unit, price, bestBefore));
@@ -105,6 +103,7 @@ public class UserInterface {
 
     // Fjerner varer
     private void handleRemoveItem() {
+        scanner.nextLine();
         String name = readString("Type in the item you want to remove: ");
         double quantity = readDouble("Type in the quantity you want to remove: ");
         foodStorage.removeItem(name, quantity);
@@ -113,6 +112,7 @@ public class UserInterface {
 
     // Søke etter varer
     private void handleSearchItem() {
+        scanner.nextLine();
         String name = readString("Type in item name: ");
         Ingredient foundItem = foodStorage.searchItem(name);
 
@@ -131,43 +131,42 @@ public class UserInterface {
 
     // Inputmetoder!
     private String readString(String prompt) {
-        System.out.print(prompt);
-        String input = scanner.nextLine().trim();
-        if (input.isEmpty()) {
-            System.out.println("Input cannot be empty, please try again");
-            return readString(prompt);
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.matches("[a-zA-ZæøåÆØÅ'\\-]+")) {
+                return input;
+            }
+            System.out.println("Invalid input, please try again. ");
         }
-        return input;
     }
 
     private int readInt(String prompt) {
-        System.out.print(prompt);
-        while (!scanner.hasNextInt()) {
-            System.out.print("Invalid input, please enter a number: ");
-            scanner.next();
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input, please enter a number. ");
+            }
         }
-        return scanner.nextInt();
     }
 
     private double readDouble(String prompt) {
-        System.out.print(prompt);
-        while (!scanner.hasNextDouble()) {
-            System.out.print("Invalid input, please enter a number: ");
-            scanner.next();
+        while (true) {
+            System.out.print(prompt);
+            try {
+                double value = Double.parseDouble(scanner.nextLine().trim());
+                if (value > 0) {
+                    return value;
+                }
+                System.out.print("Invalid input, quantity cannot be negative. Please try again. ");
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input, please enter a number. ");
+            }
         }
-        double value = scanner.nextDouble();
-        scanner.nextLine();
-        return value;
     }
 
-    private double parseDouble(String input, String errorMessage) {
-        try {
-            return Double.parseDouble(input);
-        } catch (NumberFormatException e) {
-            System.out.println(errorMessage);
-            return 0;
-        }
-    }
 
     private LocalDate readDate(String prompt) {
         while (true) {
@@ -175,7 +174,7 @@ public class UserInterface {
             try {
                 return LocalDate.parse(scanner.nextLine(), dateTimeFormat);
             } catch (DateTimeParseException e) {
-                System.out.print("Invalid date format, please use dd-MM-yyy: ");
+                System.out.print("Invalid date format, please use dd-MM-yyy.");
             }
         }
     }
