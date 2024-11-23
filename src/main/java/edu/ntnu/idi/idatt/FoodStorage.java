@@ -45,7 +45,7 @@ public class FoodStorage {
 
         System.out.println(newItem.getQuantityItem() + " " + newItem.getUnitItem()
                 + " of " + newItem.getNameItem()
-                + (items.contains(newItem) ? " has been added to an existing item in the fridge." : " has been added to the fridge."));
+                + (items.contains(newItem) ? " has been added to the fridge!" : " has been added to an existing item in the fridge!"));
     }
 
     /**
