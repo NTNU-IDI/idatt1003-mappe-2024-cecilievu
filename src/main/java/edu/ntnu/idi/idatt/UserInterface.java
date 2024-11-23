@@ -1,10 +1,9 @@
 package edu.ntnu.idi.idatt;
 
-import java.util.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Scanner;
+import java.util.*;
 
 //Variabler som skal initaliserers inn i init()-metoden
 public class UserInterface {
@@ -92,6 +91,7 @@ public class UserInterface {
 
     // Legge til vare
     private void handleAddItem() {
+        scanner.nextLine();
         String name = readString("Type in name of the new item: ");
         String quantityInput = readString("Type quantity of item: ");
         double quantity = parseDouble(quantityInput, "Invalid quantity, please enter a valid number: ");
@@ -132,7 +132,12 @@ public class UserInterface {
     // Inputmetoder!
     private String readString(String prompt) {
         System.out.print(prompt);
-        return scanner.nextLine().trim(); // Fjerner unødvendige mellomrom
+        String input = scanner.nextLine().trim();
+        if (input.isEmpty()) {
+            System.out.println("Input cannot be empty, please try again");
+            return readString(prompt);
+        }
+        return input;
     }
 
     private int readInt(String prompt) {
@@ -160,7 +165,7 @@ public class UserInterface {
             return Double.parseDouble(input);
         } catch (NumberFormatException e) {
             System.out.println(errorMessage);
-            return -1; // Bruker kan få nytt forsøk i hovedkoden
+            return 0;
         }
     }
 
