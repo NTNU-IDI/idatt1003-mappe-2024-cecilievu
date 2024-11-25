@@ -3,6 +3,7 @@ package edu.ntnu.idi.idatt;
 import java.time.LocalDate; //Newer version than util.date (help from Co-pilot)
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.*;
 
@@ -49,28 +50,10 @@ public class FoodStorage {
     }
 
     /**
-     * Displays all items in the fridge,
-     * sorted after name and date.
+     * Display items in the fridge in a copy of the ingredient list.
      */
-    public void showItem() {
-        if (items.isEmpty()) {
-            System.out.println("The fridge is empty");
-        } else {
-            System.out.println("Items in the fridge:");
-            System.out.println();
-            System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
-            System.out.println("----------------------------------------------------------------");
-            items.stream()
-                    .sorted(Comparator.comparing((Ingredient item) -> item.getNameItem().toLowerCase())
-                            .thenComparing(Ingredient::getBestBefore))
-                    .forEach(item -> {
-                        String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
-                                item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
-                        );
-                        System.out.println(formatted);
-                    });
-            System.out.println();
-        }
+    public ArrayList<Ingredient> getItems() {
+        return new ArrayList<>(items);
     }
 
     /**
@@ -108,47 +91,40 @@ public class FoodStorage {
      * @param quantity the quantity of the item to remove
      */
     public void removeItem(String name, double quantity){
+        double remainingQuantity = quantity;
+
         items.sort(Comparator.comparing(Ingredient::getBestBefore));
-        for (var iterator = items.iterator(); iterator.hasNext(); ) {
+        Iterator<Ingredient> iterator = items.iterator();
+        while(iterator.hasNext() && remainingQuantity > 0){
             Ingredient item = iterator.next();
-            if (item.getNameItem().equalsIgnoreCase(name)) {
-                if (item.getQuantityItem() > quantity) {
-                    item.setQuantityItem(item.getQuantityItem() - quantity);
+            if(item.getNameItem().equalsIgnoreCase(name)){
+                if(item.getQuantityItem() > remainingQuantity){
+                    item.setQuantityItem(item.getQuantityItem() - remainingQuantity);
+                    System.out.printf("%.2f of %s is removed. Remaining in stock: %.2f%n", quantity, name, item.getQuantityItem());
                     return;
                 } else {
-                    quantity -= item.getQuantityItem();
+                    remainingQuantity -= item.getQuantityItem();
+                    System.out.printf("%.2f of %s is removed.%n", item.getQuantityItem(), name);
                     iterator.remove();
-                }
-                if (quantity <= 0) {
-                    return;
                 }
             }
         }
-        System.out.println("Not enough " + name + " in stock to remove " + quantity);
+        if(remainingQuantity > 0){}
+        System.out.printf("Not enough %s in stock to remove %.2f. Missing %.2f.%n", name, quantity, remainingQuantity);
     }
 
     //Chat
     /**
      * Shows expired items along with their total value
      */
-    public void showExpiredItems() {
+    public ArrayList<Ingredient> getExpiredItems() {
         LocalDate today = LocalDate.now();
-
-        ArrayList<Ingredient> expiredItems = items.stream()
-                .filter(item -> item.getBestBefore().isBefore(today)) // Filtrerer ut varer som har gått ut av dato
-                .collect(Collectors.toCollection(ArrayList::new)); // Samler de i en ArrayList
-        if (expiredItems.isEmpty()) {
-            System.out.println("No items have expired! :)");
-        } else {
-            System.out.println("Expired items:");
-            expiredItems.forEach(System.out::println); // Skriver ut alle utgåtte varer
-
-            double totalValue = expiredItems.stream()
-                    .mapToDouble(item -> item.getQuantityItem() * item.getPricePerUnit())
-                    .sum();
-            System.out.println("Total value of expired items: " + totalValue + " kr");
-            System.out.println("Before throwing out, LOOK - SMELL - TASTE! Trust your senses, reduce foodwaste! :)");
-        }
+        return new ArrayList<>(
+                items.stream()
+                        .filter(item -> item.getBestBefore().isBefore(today))
+                        .sorted(Comparator.comparing(Ingredient::getBestBefore))
+                        .toList()
+        );
     }
 
     /**

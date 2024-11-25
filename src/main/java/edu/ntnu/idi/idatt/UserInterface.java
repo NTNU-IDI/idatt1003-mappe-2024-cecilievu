@@ -73,12 +73,12 @@ public class UserInterface {
     // Kartlegging av manyvalg til metoder
     private Map<MenuOption, Runnable> createActions() {
         Map<MenuOption, Runnable> actions = new HashMap<>();
-        actions.put(MenuOption.SHOW_ITEMS, foodStorage::showItem);
+        actions.put(MenuOption.SHOW_ITEMS, this::handleShowItem);
         actions.put(MenuOption.ADD_ITEM, this::handleAddItem);
         actions.put(MenuOption.REMOVE_ITEM, this::handleRemoveItem);
         actions.put(MenuOption.SEARCH_ITEM, this::handleSearchItem);
         actions.put(MenuOption.SHOW_ITEM_BY_DATE, this::handleShowItemByDate);
-        actions.put(MenuOption.SHOW_EXPIRED, foodStorage::showExpiredItems);
+        actions.put(MenuOption.SHOW_EXPIRED, this::handleShowExpiredItems);
         actions.put(MenuOption.SHOW_TOTAL_VALUE, this::handleShowTotalValue);
         return actions;
     }
@@ -88,6 +88,29 @@ public class UserInterface {
         System.out.println("============= Menu =============");
         for (MenuOption option : MenuOption.values()) {
             System.out.printf("%d. %s%n", option.getValue(), option.getDescription()); //
+        }
+    }
+
+    // Vise alle varene
+    private void handleShowItem() {
+        ArrayList<Ingredient> items = foodStorage.getItems();
+        if (items.isEmpty()) {
+            System.out.println("The fridge is empty");
+        } else {
+            System.out.println("Items in the fridge:");
+            System.out.println();
+            System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
+            System.out.println("----------------------------------------------------------------");
+            items.stream()
+                    .sorted(Comparator.comparing((Ingredient item) -> item.getNameItem().toLowerCase())
+                            .thenComparing(Ingredient::getBestBefore))
+                    .forEach(item -> {
+                        String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
+                                item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
+                        );
+                        System.out.println(formatted);
+                    });
+            System.out.println();
         }
     }
 
@@ -107,12 +130,10 @@ public class UserInterface {
         String name = readString("Type in the item you want to remove: ");
         double quantity = readDouble("Type in the quantity you want to remove: ");
         foodStorage.removeItem(name, quantity);
-        System.out.println(quantity + " " + name + " is removed!");
     }
 
     // Søke etter varer
     private void handleSearchItem() {
-        scanner.nextLine();
         String name = readString("Type in item name: ");
         Ingredient foundItem = foodStorage.searchItem(name);
 
@@ -126,19 +147,45 @@ public class UserInterface {
     // Søke varer etter dato
     private void handleShowItemByDate() {
         LocalDate date = readDate("Enter a date (dd-MM-yyyy): ");
-                ArrayList<Ingredient> itemsByDate = foodStorage.searchItemByDate(date);
+                ArrayList<Ingredient> itemByDate = foodStorage.searchItemByDate(date);
 
-        if (itemsByDate.isEmpty()) {
+        if (itemByDate.isEmpty()) {
             System.out.println("No item found with the best-before-date " + date);
         } else {
-            System.out.println("Items with the best-before-date " + date);
+            System.out.println("Items with the best-before-date " + date + ":");
+            System.out.println();
             System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
             System.out.println("----------------------------------------------------------------");
-            itemsByDate.forEach(item -> {
+            itemByDate.forEach(item -> {
                 String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
                         item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore() );
                 System.out.println(formatted);
             });
+        }
+    }
+
+    // Vise varer utgått på dato + total value
+    private void handleShowExpiredItems() {
+        ArrayList<Ingredient> expiredItems = foodStorage.getExpiredItems();
+
+        if (expiredItems.isEmpty()) {
+            System.out.println("No items have expired!");
+        } else {
+            System.out.println("Expired items:");
+            System.out.println();
+            System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
+            System.out.println("----------------------------------------------------------------");
+            expiredItems.forEach(item -> {
+                String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
+                        item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore() );
+                System.out.println(formatted);
+            });
+
+            double totalValue = expiredItems.stream()
+                    .mapToDouble(item -> item.getQuantityItem() * item.getPricePerUnit())
+                    .sum();
+            System.out.println("Total value of expired items: " + totalValue + " kr");
+            System.out.println("Before throwing out, LOOK - SMELL - TASTE! Trust your senses, reduce foodwaste! :)");
         }
     }
 
@@ -152,8 +199,8 @@ public class UserInterface {
     private String readString(String prompt) {
         while (true) {
             System.out.print(prompt);
-            String input = scanner.nextLine().trim();
-            if (input.matches("[a-zA-ZæøåÆØÅ'\\-]+")) {
+            String input = scanner.nextLine();
+            if (!input.isBlank()) {
                 return input;
             }
             System.out.println("Invalid input, please try again. ");
