@@ -87,15 +87,18 @@ public class FoodStorage {
     }
 
     /**
-     * Optional to find the latest added item with the specified name.
+     * Searching for ingredients that expires by a specific date.
      *
-     * @param name the name of the item
-     * @return an Optional containing the latest item, or empty if not found
+     * @param date the specific date
+     * @return ingredients that expires before the date
      */
-    public Optional<Ingredient> findLatestItem (String name){
-        return items.stream()
-                .filter(item -> item.getNameItem().equalsIgnoreCase(name))
-                .reduce((first, second) -> second); // betyr at vi alltid beholder det siste elementet vi finner
+    public ArrayList<Ingredient> searchItemByDate(LocalDate date) {
+        return new ArrayList<>(
+                items.stream()
+                        .filter(item -> item.getBestBefore().isBefore(date))
+                        .sorted(Comparator.comparing(Ingredient::getBestBefore))
+                        .toList()
+        );
     }
 
     /**

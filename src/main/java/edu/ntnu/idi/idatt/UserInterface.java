@@ -16,9 +16,10 @@ public class UserInterface {
         ADD_ITEM(2, "Add new item"),
         REMOVE_ITEM(3, "Remove item"),
         SEARCH_ITEM(4, "Search for an item"),
-        SHOW_EXPIRED(5, "Show expired items"),
-        SHOW_TOTAL_VALUE(6, "Show total value in the fridge"),
-        EXIT(7, "End program");
+        SHOW_ITEM_BY_DATE(5, "Show list of items by date"),
+        SHOW_EXPIRED(6, "Show expired items"),
+        SHOW_TOTAL_VALUE(7, "Show total value in the fridge"),
+        EXIT(8, "End program");
 
         private final int value;
         private final String description;
@@ -76,6 +77,7 @@ public class UserInterface {
         actions.put(MenuOption.ADD_ITEM, this::handleAddItem);
         actions.put(MenuOption.REMOVE_ITEM, this::handleRemoveItem);
         actions.put(MenuOption.SEARCH_ITEM, this::handleSearchItem);
+        actions.put(MenuOption.SHOW_ITEM_BY_DATE, this::handleShowItemByDate);
         actions.put(MenuOption.SHOW_EXPIRED, foodStorage::showExpiredItems);
         actions.put(MenuOption.SHOW_TOTAL_VALUE, this::handleShowTotalValue);
         return actions;
@@ -118,6 +120,25 @@ public class UserInterface {
             System.out.println("Found item: " + foundItem.getNameItem() + ", quantity: " + foundItem.getQuantityItem());
         } else {
             System.out.println("Item not found");
+        }
+    }
+
+    // Søke varer etter dato
+    private void handleShowItemByDate() {
+        LocalDate date = readDate("Enter a date (dd-MM-yyyy): ");
+                ArrayList<Ingredient> itemsByDate = foodStorage.searchItemByDate(date);
+
+        if (itemsByDate.isEmpty()) {
+            System.out.println("No item found with the best-before-date " + date);
+        } else {
+            System.out.println("Items with the best-before-date " + date);
+            System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
+            System.out.println("----------------------------------------------------------------");
+            itemsByDate.forEach(item -> {
+                String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
+                        item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore() );
+                System.out.println(formatted);
+            });
         }
     }
 
