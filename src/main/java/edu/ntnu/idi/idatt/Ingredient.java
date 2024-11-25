@@ -85,17 +85,6 @@ public class Ingredient {
     }
 
     /**
-     * Returns a string representation of the ingredient.
-     *
-     * @return a string that contains the name, quanity, price per unit and best-before date of the item.
-     */
-    @Override
-    public String toString() {
-        return "Name of item: " + nameItem + ", quantity: " + quantityItem + " " + unitItem + "\n"
-                + "Price per unit: " + pricePerUnit + " kr," + " best-before-date: " + bestBefore + "\n";
-    }
-
-    /**
      * Compares the ingredient to another object to determine if they are euqal.
      * Two ingredients are considered equal if they have the same name,
      * the same best-before and the same price per unit
