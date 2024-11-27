@@ -5,12 +5,19 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
-//Variabler som skal initaliserers inn i init()-metoden
+/**
+ * The UserInterFace class handles the interaction with the user.
+ * It provides a menu for the user to manage the fridge such as
+ * adding, removing, searching or displaying items.
+ */
 public class UserInterface {
     private final Scanner scanner = new Scanner(System.in);
     private final FoodStorage foodStorage = new FoodStorage();
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
+    /**
+     * Enum menu, representing options for the user.
+     */
     private enum MenuOption {
         SHOW_ITEMS(1, "Show items in the fridge"),
         ADD_ITEM(2, "Add new item"),
@@ -37,11 +44,20 @@ public class UserInterface {
             return description;
         }
 
+        /**
+         * Finds a menu option based on its value.
+         *
+         * @param value the "int" value of the menu options
+         * @return an Optional, containing the chosen value from MenuOption
+         */
         public static Optional<MenuOption> fromValue(int value) {
             return Arrays.stream(values()).filter(option -> option.value == value).findFirst();
         }
     }
 
+    /**
+     * Initialize the food storage/fridge with predefined items.
+     */
     public void init() {
         // Forhåndsdefinerte varer
         foodStorage.addItem(new Ingredient("Egg", 12, "pieces", 2.0, LocalDate.of(2024, 12, 24)));
@@ -50,6 +66,9 @@ public class UserInterface {
         foodStorage.addItem(new Ingredient("Flour", 1000, "grams",0.03, LocalDate.of(2024,12,24)));
     }
 
+    /**
+     * Starts the application, representing the menu and handling user input.
+     */
     public void start() {
         Map<MenuOption, Runnable> actions = createActions(); // Kartlegging av menyvalg til funksjoner
 
@@ -71,6 +90,12 @@ public class UserInterface {
     }
 
     // Kartlegging av manyvalg til metoder
+
+    /**
+     * Maps meny options to their corresponding methods.
+     *
+     * @return a mop of MenuOptions to Runnable actions
+     */
     private Map<MenuOption, Runnable> createActions() {
         Map<MenuOption, Runnable> actions = new HashMap<>();
         actions.put(MenuOption.SHOW_ITEMS, this::handleShowItem);
@@ -83,7 +108,9 @@ public class UserInterface {
         return actions;
     }
 
-    // Menyvisning
+    /**
+     * Prints menu display for the user.
+     */
     private void printMenu() {
         System.out.println("============= Menu =============");
         for (MenuOption option : MenuOption.values()) {
@@ -91,7 +118,9 @@ public class UserInterface {
         }
     }
 
-    // Vise alle varene
+    /**
+     * Displays items in the fridge, sorted by name and best-before date.
+     */
     private void handleShowItem() {
         ArrayList<Ingredient> items = foodStorage.getItems();
         if (items.isEmpty()) {
@@ -112,7 +141,10 @@ public class UserInterface {
         }
     }
 
-    // Legge til vare
+    /**
+     *
+     * Prompts the user to add new item to the fridge.
+     */
     private void handleAddItem() {
         String name = readString("Type in name of the new item: ");
         double quantity = readDouble("Type quantity of item: ");
@@ -123,14 +155,19 @@ public class UserInterface {
         foodStorage.addItem(new Ingredient(name, quantity, unit, price, bestBefore));
     }
 
-    // Fjerner varer
+    /**
+     * Prompts the user to remove item from the fridge.
+     */
     private void handleRemoveItem() {
         String name = readString("Type in the item you want to remove: ");
         double quantity = readDouble("Type in the quantity you want to remove: ");
         foodStorage.removeItem(name, quantity);
     }
 
-    // Søke etter varer
+    /**
+     * Prompts the user to search for a specific item by name.
+     * Displays the matching item sorted by name and date.
+     */
     private void handleSearchItem() {
         String name = readString("Type in item name: ");
         ArrayList<Ingredient> matchingItems = foodStorage.searchItem(name);
@@ -141,17 +178,20 @@ public class UserInterface {
             System.out.println("Items found with the name: " + name);
             printListItem();
             matchingItems.stream()
-                    .sorted(Comparator.comparing(Ingredient::getNameItem))
+                    .sorted(Comparator.comparing(Ingredient::getBestBefore))
                     .forEach(item -> {
                         String formatted = String.format("%-8s      | %7.2f   %-7s | %6.2f kr      | %4s",
                                 item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
                         );
                         System.out.println(formatted);
                     });
+            System.out.println();
         }
     }
 
-    // Søke varer etter dato
+    /**
+     * Prompts the user to search items by best-before date.
+     */
     private void handleShowItemByDate() {
         LocalDate date = readDate("Enter a date (dd-MM-yyyy): ");
                 ArrayList<Ingredient> itemByDate = foodStorage.searchItemByDate(date);
@@ -166,10 +206,14 @@ public class UserInterface {
                         item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore());
                 System.out.println(formatted);
             });
+            System.out.println();
         }
     }
 
-    // Vise varer utgått på dato + total value
+    /**
+     * Displays expired items and its total value.
+     * Encourages the user to check items before throwing out to reduce food waste.
+     */
     private void handleShowExpiredItems() {
         ArrayList<Ingredient> expiredItems = foodStorage.getExpiredItems();
 
@@ -189,16 +233,27 @@ public class UserInterface {
                     .sum();
             System.out.println("Total value of expired items: " + totalValue + " kr");
             System.out.println("Before throwing out, LOOK - SMELL - TASTE! Trust your senses, reduce foodwaste! :)");
+            System.out.println();
         }
     }
 
-    // Vise totalverdi
+    /**
+     * Displays total value of all the items in the fridge.
+     * Each item's value is calculated as quantity * pricer per unit.
+     */
     private void handleShowTotalValue() {
         double totalValue = foodStorage.calculateTotalValue();
         System.out.printf("Total value of items: %.2f kr%n", totalValue);
+        System.out.println();
     }
 
-    // Inputmetoder!
+    /**
+     * Reads a non-empty "string" input from user.
+     * Continues to prompt until a valid input is entered.
+     *
+     * @param prompt the message displayed to the user to guide input
+     * @return the user's input as a non-empty string
+     */
     private String readString(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -210,6 +265,13 @@ public class UserInterface {
         }
     }
 
+    /**
+     * Reads an "int" input from user.
+     * Continues to prompt until valid input is entered.
+     *
+     * @param prompt the message displayed to the user to guide input
+     * @return the user's input as an int
+     */
     private int readInt(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -221,6 +283,14 @@ public class UserInterface {
         }
     }
 
+    /**
+     * Reads a positive "double" value from user.
+     * Ensure that the value is greater than zero.
+     * Continues to prompt until valid input is entered.
+     *
+     * @param prompt the message displayed to the user to guide input
+     * @return the user's input as a positive double
+     */
     private double readDouble(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -236,7 +306,13 @@ public class UserInterface {
         }
     }
 
-
+    /**
+     * Reads a date input from user in the format "dd-MM-yyyy"
+     * Continues to prompt until valid input is entered.
+     *
+     * @param prompt the message displayed to the user to guide input
+     * @return the user's input as a LocalDate
+     */
     private LocalDate readDate(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -248,6 +324,12 @@ public class UserInterface {
         }
     }
 
+    /**
+     * Prints the table header for displaying items in fridge.
+     * This includes columns for the item name, quantity, unit, price per unit and best-before date.
+     * The method is to ensure consistent formatting across different output
+     * such as showing all items, search for items or show expired items.
+     */
     private void printListItem() {
         System.out.println();
         System.out.println("Name          | Quantity  Unit    | Price per unit | Best before date   ");
