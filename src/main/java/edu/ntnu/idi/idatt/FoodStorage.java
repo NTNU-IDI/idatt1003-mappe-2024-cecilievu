@@ -1,11 +1,11 @@
 package edu.ntnu.idi.idatt;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate; //Newer version than util.date (help from Co-pilot)
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Optional;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
 /**
  * This class represent a "food storage" that manages items in a fridge.
@@ -59,14 +59,12 @@ public class FoodStorage {
     /**
      * Searching for a specific item in the fridge
      *
-     * @param name the name of the item to search for
      * @return the item if found, or null if not
      */
-    public Ingredient searchItem(String name){
+    public ArrayList<Ingredient> searchItem(String name){
         return items.stream()
                 .filter(item -> item.getNameItem().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
+                .collect(Collectors.toCollection(ArrayList::new)); // Konverterer stream til ArrayList
     }
 
     /**
@@ -110,7 +108,7 @@ public class FoodStorage {
             }
         }
         if(remainingQuantity > 0){}
-        System.out.printf("Not enough %s in stock to remove %.2f. Missing %.2f.%n", name, quantity, remainingQuantity);
+        System.out.printf("Not enough %s in stock to remove %.2f. Missing %.2f.%n", name, quantity,remainingQuantity);
     }
 
     //Chat

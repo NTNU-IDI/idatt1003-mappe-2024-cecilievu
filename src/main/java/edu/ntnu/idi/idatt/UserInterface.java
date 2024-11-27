@@ -98,14 +98,12 @@ public class UserInterface {
             System.out.println("The fridge is empty");
         } else {
             System.out.println("Items in the fridge:");
-            System.out.println();
-            System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
-            System.out.println("----------------------------------------------------------------");
+            printListItem();
             items.stream()
                     .sorted(Comparator.comparing((Ingredient item) -> item.getNameItem().toLowerCase())
                             .thenComparing(Ingredient::getBestBefore))
                     .forEach(item -> {
-                        String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
+                        String formatted = String.format("%-8s      | %7.2f   %-7s | %6.2f kr      | %4s",
                                 item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
                         );
                         System.out.println(formatted);
@@ -135,12 +133,21 @@ public class UserInterface {
     // Søke etter varer
     private void handleSearchItem() {
         String name = readString("Type in item name: ");
-        Ingredient foundItem = foodStorage.searchItem(name);
+        ArrayList<Ingredient> matchingItems = foodStorage.searchItem(name);
 
-        if (foundItem != null) {
-            System.out.println("Found item: " + foundItem.getNameItem() + ", quantity: " + foundItem.getQuantityItem());
+        if (matchingItems.isEmpty()) {
+            System.out.println("No matching item with the name: " + name);
         } else {
-            System.out.println("Item not found");
+            System.out.println("Items found with the name: " + name);
+            printListItem();
+            matchingItems.stream()
+                    .sorted(Comparator.comparing(Ingredient::getNameItem))
+                    .forEach(item -> {
+                        String formatted = String.format("%-8s      | %7.2f   %-7s | %6.2f kr      | %4s",
+                                item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
+                        );
+                        System.out.println(formatted);
+                    });
         }
     }
 
@@ -153,12 +160,10 @@ public class UserInterface {
             System.out.println("No item found with the best-before-date " + date);
         } else {
             System.out.println("Items with the best-before-date " + date + ":");
-            System.out.println();
-            System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
-            System.out.println("----------------------------------------------------------------");
+            printListItem();
             itemByDate.forEach(item -> {
-                String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
-                        item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore() );
+                String formatted = String.format("%-8s      | %7.2f   %-7s | %6.2f kr      | %4s",
+                        item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore());
                 System.out.println(formatted);
             });
         }
@@ -172,9 +177,7 @@ public class UserInterface {
             System.out.println("No items have expired!");
         } else {
             System.out.println("Expired items:");
-            System.out.println();
-            System.out.println("Name     | Quantity  Unit    | Price per unit | Best before date   ");
-            System.out.println("----------------------------------------------------------------");
+            printListItem();
             expiredItems.forEach(item -> {
                 String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
                         item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore() );
@@ -243,5 +246,11 @@ public class UserInterface {
                 System.out.print("Invalid date format, please use dd-MM-yyy.");
             }
         }
+    }
+
+    private void printListItem() {
+        System.out.println();
+        System.out.println("Name          | Quantity  Unit    | Price per unit | Best before date   ");
+        System.out.println("---------------------------------------------------------------------");
     }
 }

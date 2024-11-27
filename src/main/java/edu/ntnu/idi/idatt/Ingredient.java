@@ -83,34 +83,4 @@ public class Ingredient {
     public LocalDate getBestBefore() {
         return bestBefore;
     }
-
-    /**
-     * Compares the ingredient to another object to determine if they are euqal.
-     * Two ingredients are considered equal if they have the same name,
-     * the same best-before and the same price per unit
-     *
-     * @param o the object to compare the ingredient to
-     * @return true if the specified object is equal to the ingredient; false otherwise
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true; // Samme objekt, returner true
-        if (o == null || getClass() != o.getClass()) return false; // Null eller annen klasse, returner false
-        Ingredient that = (Ingredient) o; // Typecast til Ingredient
-        return Double.compare(that.pricePerUnit, pricePerUnit) == 0 &&
-                nameItem.equalsIgnoreCase(that.nameItem) && // Sammenlign navn (case-insensitive)
-                bestBefore.equals(that.bestBefore); // Sammenlign best før-dato
-    }
-
-    /**
-     * Generates a hash code for this ingredient.
-     * The hash code is computed based on the same name, best-before date
-     * and price per unit og the ingredient
-     *
-     * @return a hash code value of the ingredient
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(nameItem.toLowerCase(), pricePerUnit, bestBefore);
-    }
 }
