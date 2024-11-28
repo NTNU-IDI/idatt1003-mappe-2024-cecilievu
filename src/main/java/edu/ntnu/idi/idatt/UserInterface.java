@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.*; //importing all utility classes
 
 /**
  * The UserInterFace class handles the interaction with the user.
@@ -122,7 +122,7 @@ public class UserInterface {
      * Displays items in the fridge, sorted by name and best-before date.
      */
     private void handleShowItem() {
-        ArrayList<Ingredient> items = foodStorage.getItems();
+        List<Ingredient> items = foodStorage.getItems();
         if (items.isEmpty()) {
             System.out.println("The fridge is empty");
         } else {
@@ -161,7 +161,8 @@ public class UserInterface {
     private void handleRemoveItem() {
         String name = readString("Type in the item you want to remove: ");
         double quantity = readDouble("Type in the quantity you want to remove: ");
-        foodStorage.removeItem(name, quantity);
+        String result = foodStorage.removeItem(name, quantity);
+        System.out.println(result);
     }
 
     /**
@@ -170,7 +171,7 @@ public class UserInterface {
      */
     private void handleSearchItem() {
         String name = readString("Type in item name: ");
-        ArrayList<Ingredient> matchingItems = foodStorage.searchItem(name);
+        List<Ingredient> matchingItems = foodStorage.searchItem(name);
 
         if (matchingItems.isEmpty()) {
             System.out.println("No matching item with the name: " + name);
@@ -194,7 +195,7 @@ public class UserInterface {
      */
     private void handleShowItemByDate() {
         LocalDate date = readDate("Enter a date (dd-MM-yyyy): ");
-                ArrayList<Ingredient> itemByDate = foodStorage.searchItemByDate(date);
+                List<Ingredient> itemByDate = foodStorage.searchItemByDate(date);
 
         if (itemByDate.isEmpty()) {
             System.out.println("No item found with the best-before-date " + date);
@@ -215,7 +216,7 @@ public class UserInterface {
      * Encourages the user to check items before throwing out to reduce food waste.
      */
     private void handleShowExpiredItems() {
-        ArrayList<Ingredient> expiredItems = foodStorage.getExpiredItems();
+        List<Ingredient> expiredItems = foodStorage.getExpiredItems();
 
         if (expiredItems.isEmpty()) {
             System.out.println("No items have expired!");
