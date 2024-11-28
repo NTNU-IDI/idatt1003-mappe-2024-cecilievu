@@ -34,7 +34,10 @@ public class FoodStorage {
      *
      * @param newItem the item to be added
      */
-    public void addItem(Ingredient newItem) {
+    public String addItem(Ingredient newItem) {
+        if (newItem == null || newItem.getQuantityItem() <= 0) {
+            throw new IllegalArgumentException("Invalid item or quantity");
+        }
         items.stream()
                 .filter(item -> item.getNameItem().equalsIgnoreCase(newItem.getNameItem())
                         && item.getBestBefore().equals(newItem.getBestBefore())
@@ -45,8 +48,7 @@ public class FoodStorage {
                         () -> items.add(newItem) // Add new item
                 );
 
-        System.out.println(newItem.getQuantityItem() + " " + newItem.getUnitItem()
-                + " of " + newItem.getNameItem() + " has been added to the fridge!");
+        return String.format("%.2f of %s has been added to the fridge!", newItem.getQuantityItem(), newItem.getNameItem());
     }
 
     /**
@@ -98,24 +100,32 @@ public class FoodStorage {
      * @param quantity the quantity of the item to remove
      */
     public String removeItem(String name, double quantity) {
-        double remainingQuantity = quantity;
-
         items.sort(Comparator.comparing(Ingredient::getBestBefore));
-        Iterator<Ingredient> iterator = items.iterator();
 
-        while (iterator.hasNext() && remainingQuantity > 0) {
+        double totalQuantity = items.stream()
+                .filter(item -> item.getNameItem().equalsIgnoreCase(name))
+                .mapToDouble(Ingredient::getQuantityItem)
+                .sum();
+
+        if (totalQuantity < quantity) {
+            return String.format("Not enough %s in stock to remove %.2f. Stock in fridge: %.2f.", name, quantity, totalQuantity);
+        }
+
+        Iterator<Ingredient> iterator = items.iterator();
+        while (iterator.hasNext() && quantity > 0) {
             Ingredient item = iterator.next();
             if (item.getNameItem().equalsIgnoreCase(name)) {
-                if (item.getQuantityItem() > remainingQuantity) {
-                    item.setQuantityItem(item.getQuantityItem() - remainingQuantity);
+                if (item.getQuantityItem() > quantity) {
+                    item.setQuantityItem(item.getQuantityItem() - quantity);
                     return String.format("%.2f of %s is removed. Remaining in stock: %.2f%n", quantity, name, item.getQuantityItem());
+                } else {
+                    iterator.remove();
                 }
-                iterator.remove();
-                return String.format("%.2f of %s is removed. Item is now out of stock.", item.getQuantityItem(), name);
             }
         }
-        return String.format("Not enough %s in stock to remove %.2f. Missing %.2f.", name, quantity, remainingQuantity);
+        return String.format("%.2f of %s is removed. Item is now out of stock.", quantity, name);
     }
+
 
 
     //Chat

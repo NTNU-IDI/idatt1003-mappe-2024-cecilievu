@@ -152,7 +152,8 @@ public class UserInterface {
         double price = readDouble("Price per unit: ");
         LocalDate bestBefore = readDate("Type in best before date (dd-MM-yyyy): ");
 
-        foodStorage.addItem(new Ingredient(name, quantity, unit, price, bestBefore));
+        String message = foodStorage.addItem(new Ingredient(name, quantity, unit, price, bestBefore));
+        System.out.println(message);
     }
 
     /**
@@ -161,8 +162,9 @@ public class UserInterface {
     private void handleRemoveItem() {
         String name = readString("Type in the item you want to remove: ");
         double quantity = readDouble("Type in the quantity you want to remove: ");
-        String result = foodStorage.removeItem(name, quantity);
-        System.out.println(result);
+
+        String message = foodStorage.removeItem(name, quantity);
+        System.out.println(message);
     }
 
     /**
