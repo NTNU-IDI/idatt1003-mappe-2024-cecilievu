@@ -97,27 +97,24 @@ public class FoodStorage {
      * @param name the name of the item to remove
      * @param quantity the quantity of the item to remove
      */
-    public String removeItem(String name, double quantity){
+    public String removeItem(String name, double quantity) {
         double remainingQuantity = quantity;
 
         items.sort(Comparator.comparing(Ingredient::getBestBefore));
         Iterator<Ingredient> iterator = items.iterator();
 
-        while(iterator.hasNext() && remainingQuantity > 0){
+        while (iterator.hasNext() && remainingQuantity > 0) {
             Ingredient item = iterator.next();
-            if(item.getNameItem().equalsIgnoreCase(name)){
-                if(item.getQuantityItem() > remainingQuantity){
+            if (item.getNameItem().equalsIgnoreCase(name)) {
+                if (item.getQuantityItem() > remainingQuantity) {
                     item.setQuantityItem(item.getQuantityItem() - remainingQuantity);
                     return String.format("%.2f of %s is removed. Remaining in stock: %.2f%n", quantity, name, item.getQuantityItem());
-                } else {
-                    remainingQuantity -= item.getQuantityItem();
-                    iterator.remove();
-                    return String.format("%.2f of %s is removed.%n", item.getQuantityItem(), name);
                 }
+                iterator.remove();
+                return String.format("%.2f of %s is removed. Item is now out of stock.", item.getQuantityItem(), name);
             }
         }
-        return String.format("Not enough %s in stock to remove %.2f. Missing %.2f.",
-                name, quantity, remainingQuantity);
+        return String.format("Not enough %s in stock to remove %.2f. Missing %.2f.", name, quantity, remainingQuantity);
     }
 
 
