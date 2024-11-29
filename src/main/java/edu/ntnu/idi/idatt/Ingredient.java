@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 /**
  * Represents an ingredient with attributes such as name, quantity, unit, price and best-before date.
