@@ -13,6 +13,7 @@ import java.util.*; //importing all utility classes
 public class UserInterface {
     private final Scanner scanner = new Scanner(System.in);
     private final FoodStorage foodStorage = new FoodStorage();
+    private final CookBook cookBook = new CookBook();
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     /**
@@ -26,7 +27,12 @@ public class UserInterface {
         SHOW_ITEM_BY_DATE(5, "Show list of items by date"),
         SHOW_EXPIRED(6, "Show expired items"),
         SHOW_TOTAL_VALUE(7, "Show total value in the fridge"),
-        EXIT(8, "End program");
+        SHOW_ALL_RECIPES(8, "Show all recipes"),
+        ADD_NEW_RECIPE(9, "Add new recipe"),
+        REMOVE_RECIPE(10, "Remove recipe"),
+        CHECK_RECIPE(11, "Check if a recipe can be made"),
+        SUGGEST_RECIPE(12, "Suggest recipes from items in fridge"),
+        EXIT(13, "End program");
 
         private final int value;
         private final String description;
@@ -82,7 +88,7 @@ public class UserInterface {
                     System.out.println("Ending program... Goodbye!");
                     break;
                 }
-                actions.get(menuOption.get()).run(); // Kjør valgt handling
+                actions.get(menuOption.get()).run(); // Runs the chosen action
             } else {
                 System.out.println("Invalid option, please try again");
             }
@@ -105,6 +111,10 @@ public class UserInterface {
         actions.put(MenuOption.SHOW_ITEM_BY_DATE, this::handleShowItemByDate);
         actions.put(MenuOption.SHOW_EXPIRED, this::handleShowExpiredItems);
         actions.put(MenuOption.SHOW_TOTAL_VALUE, this::handleShowTotalValue);
+        actions.put(MenuOption.SHOW_ALL_RECIPES, this::handleShowRecipe);
+        actions.put(MenuOption.ADD_NEW_RECIPE, this::handleAddRecipe);
+        actions.put(MenuOption.CHECK_RECIPE, this::handleCheckRecipe);
+        actions.put(MenuOption.SUGGEST_RECIPE, this::handleSuggestRecipe);
         return actions;
     }
 
@@ -250,6 +260,45 @@ public class UserInterface {
         System.out.println();
     }
 
+    // COOKBOOK
+    public void handleShowRecipe() {
+
+    }
+
+    public void handleAddRecipe() {
+        System.out.println("Step 1. Writing the recipe:");
+        String name = readString("Type in name of the new recipe: ");
+        String description = readString("Type in a short description of the recipe: ");
+        String instruction = readString("Type in introduction for recipe: ");
+        int servings = readInt("Type in the number of servings: ");
+        System.out.println();
+
+        List<Ingredient> ingredients = new ArrayList<>();
+        boolean addMoreIngredients = true;
+
+        while (addMoreIngredients) {
+            System.out.println("Step 2. Adding ingredients with its quantity and unit for the recipe:");
+            String ingredientName = readString("Type in an ingredient: ");
+            double ingredientQuantity = readDouble("Type in quantity: ");
+            String ingredientUnit = readString("Type in unit (e.g dl, grams or pieces): ");
+
+            ingredients.add(new Ingredient(ingredientName, ingredientQuantity, ingredientUnit, 0.0, LocalDate.MAX));
+            addMoreIngredients = readString("Do you want to add another ingredient? (yes/no): ")
+                    .equalsIgnoreCase("yes");
+        }
+        Recipe recipe = new Recipe(name, description, instruction, servings);
+        String result = cookBook.addRecipe(recipe);
+        System.out.println(result);
+    }
+
+    public void handleCheckRecipe() {
+        String nameRecipe = readString("Type in recipe name: ");
+    }
+
+    public void handleSuggestRecipe() {
+
+    }
+
     /**
      * Reads a non-empty "string" input from user.
      * Continues to prompt until a valid input is entered.
@@ -260,8 +309,8 @@ public class UserInterface {
     private String readString(String prompt) {
         while (true) {
             System.out.print(prompt);
-            String input = scanner.nextLine();
-            if (!input.isBlank()) {
+            String input = scanner.nextLine().trim();
+            if (!input.isBlank() && input.matches("[a-zA-ZÆØÅæøå\\s]+")) {
                 return input;
             }
             System.out.println("Invalid input, please try again. ");
