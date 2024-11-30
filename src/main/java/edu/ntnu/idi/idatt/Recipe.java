@@ -11,11 +11,11 @@ public class Recipe {
     private List<Ingredient> ingredientsRecipe;
     private int servingsRecipe;
 
-    public Recipe(String nameRecipe, String descriptionRecipe, String instructionsRecipe, int servingsRecipe) {
+    public Recipe(String nameRecipe, String descriptionRecipe, String instructionsRecipe, List<Ingredient> ingredients, int servingsRecipe) {
         this.nameRecipe = nameRecipe;
         this.instructionsRecipe = instructionsRecipe;
         this.descriptionRecipe = descriptionRecipe;
-        this.ingredientsRecipe = new ArrayList<>();
+        this.ingredientsRecipe = ingredients;
         this.servingsRecipe = servingsRecipe;
     }
 
