@@ -19,8 +19,18 @@ public class CookBook {
         return String.format("The recipe '%s' is added to the cookbook.", newRecipe.getNameRecipe());
     }
 
-    public void removeRecipe(Recipe recipeToRemove) {
-        recipes.remove(recipeToRemove);
+    public String removeRecipe(String recipeName) {
+        Recipe recipeToRemove = recipes.stream()
+                .filter(recipe -> recipe.getNameRecipe().equalsIgnoreCase(recipeName))
+                .findFirst()
+                .orElse(null);
+
+        if (recipeToRemove != null) {
+            recipes.remove(recipeToRemove);
+            return String.format("The recipe '%s' is removed from the cookbook.", recipeName);
+        } else {
+            return String.format("The recipe '%s' does not exist in the cookbook.", recipeName);
+        }
     }
 
     public List<Recipe> getRecipes() {
