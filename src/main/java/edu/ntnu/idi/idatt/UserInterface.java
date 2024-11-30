@@ -70,6 +70,24 @@ public class UserInterface {
         foodStorage.addItem(new Ingredient( "Milk", 3, "L", 10.0, LocalDate.of(2024,12,24)));
         foodStorage.addItem(new Ingredient("Butter", 250, "grams", 0.1, LocalDate.of(2024,12,24)));
         foodStorage.addItem(new Ingredient("Flour", 1000, "grams",0.03, LocalDate.of(2024,12,24)));
+
+        // Forhåndsdefinterte oppskrifter
+        List<Ingredient> pancakesIngredient = List.of(
+                new Ingredient("Egg", 2, "pieces", 0.0, LocalDate.MAX),
+                new Ingredient("Milk", 0.25, "L", 0.0, LocalDate.MAX),
+                new Ingredient("Butter", 50, "grams", 0.0, LocalDate.MAX),
+                new Ingredient("Flour", 150, "grams", 0.0, LocalDate.MAX),
+                new Ingredient("Baking soda", 6, "grams", 0.0, LocalDate.MAX),
+                new Ingredient("Sugar", 9, "grams", 0.0, LocalDate.MAX)
+        );
+        Recipe pancakeRecipe = new Recipe(
+                "Pancakes",
+                "Usually a breakfast dish, thin and round cake",
+                "Mix all ingredients together, pour batter in a pan an cook until golden",
+                pancakesIngredient,
+                4
+        );
+        cookBook.addRecipe(pancakeRecipe);
     }
 
     /**
@@ -113,6 +131,7 @@ public class UserInterface {
         actions.put(MenuOption.SHOW_TOTAL_VALUE, this::handleShowTotalValue);
         actions.put(MenuOption.SHOW_ALL_RECIPES, this::handleShowRecipe);
         actions.put(MenuOption.ADD_NEW_RECIPE, this::handleAddRecipe);
+        actions.put(MenuOption.REMOVE_RECIPE, this::handleRemoveRecipe);
         actions.put(MenuOption.CHECK_RECIPE, this::handleCheckRecipe);
         actions.put(MenuOption.SUGGEST_RECIPE, this::handleSuggestRecipe);
         return actions;
@@ -262,22 +281,39 @@ public class UserInterface {
 
     // COOKBOOK
     public void handleShowRecipe() {
-
+        List<Recipe> recipes = cookBook.getRecipes();
+        if (recipes.isEmpty()) {
+            System.out.println("There's no recipes in the cookbook.");
+        } else {
+            System.out.println("Recipes in the cookbook: ");
+            System.out.println("Name        | Description                  | Servings");
+            System.out.println("-------------------------------------------------------");
+            recipes.stream()
+                    .sorted(Comparator.comparing(recipe -> recipe.getNameRecipe().toLowerCase()))
+                    .forEach(recipe -> {
+                        String formatted = String.format("%-14s | %-30s | %d",
+                                recipe.getNameRecipe(), recipe.getDescriptionRecipe(), recipe.getServingsRecipe()
+                        );
+                        System.out.println(formatted);
+                    });
+            System.out.println();
+        }
     }
 
     public void handleAddRecipe() {
-        System.out.println("Step 1. Writing the recipe:");
+        System.out.println("Step 1. Writing the recipe");
+        System.out.println("------------------------------");
         String name = readString("Type in name of the new recipe: ");
         String description = readString("Type in a short description of the recipe: ");
-        String instruction = readString("Type in introduction for recipe: ");
+        String instruction = readString("Type in instructions for recipe: ");
         int servings = readInt("Type in the number of servings: ");
-        System.out.println();
+        System.out.println("Step 2. Adding ingredients with its quantity and unit for the recipe:");
+        System.out.println("------------------------------------------------------------------------");
 
         List<Ingredient> ingredients = new ArrayList<>();
         boolean addMoreIngredients = true;
 
         while (addMoreIngredients) {
-            System.out.println("Step 2. Adding ingredients with its quantity and unit for the recipe:");
             String ingredientName = readString("Type in an ingredient: ");
             double ingredientQuantity = readDouble("Type in quantity: ");
             String ingredientUnit = readString("Type in unit (e.g dl, grams or pieces): ");
@@ -286,8 +322,14 @@ public class UserInterface {
             addMoreIngredients = readString("Do you want to add another ingredient? (yes/no): ")
                     .equalsIgnoreCase("yes");
         }
-        Recipe recipe = new Recipe(name, description, instruction, servings);
+        Recipe recipe = new Recipe(name, description, instruction, ingredients, servings);
         String result = cookBook.addRecipe(recipe);
+        System.out.println(result);
+    }
+
+    public void handleRemoveRecipe() {
+        String name = readString("Type in name of the recipe to remove: ");
+        String result = cookBook.removeRecipe(name);
         System.out.println(result);
     }
 
