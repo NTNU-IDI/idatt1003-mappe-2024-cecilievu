@@ -1,13 +1,9 @@
 package edu.ntnu.idi.idatt.views;
 
-import edu.ntnu.idi.idatt.models.CookBook;
-import edu.ntnu.idi.idatt.models.FoodStorage;
-import edu.ntnu.idi.idatt.models.Ingredient;
-import edu.ntnu.idi.idatt.models.Recipe;
+import edu.ntnu.idi.idatt.models.*;
+import edu.ntnu.idi.idatt.utils.Utils;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*; //importing all utility classes
 
 /**
@@ -16,10 +12,9 @@ import java.util.*; //importing all utility classes
  * adding, removing, searching or displaying items.
  */
 public class UserInterface {
-    private final Scanner scanner = new Scanner(System.in);
     private final FoodStorage foodStorage = new FoodStorage();
     private final CookBook cookBook = new CookBook();
-    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private final Utils utils = new Utils();
 
     /**
      * Enum menu, representing options for the user.
@@ -99,11 +94,12 @@ public class UserInterface {
      * Starts the application, representing the menu and handling user input.
      */
     public void start() {
+        init();
         Map<MenuOption, Runnable> actions = createActions(); // Kartlegging av menyvalg til funksjoner
 
         while(true) {
             printMenu();
-            int choice = readInt("Choose an option: ");
+            int choice = utils.readInt("Choose an option: ");
             Optional<MenuOption> menuOption = MenuOption.fromValue(choice);
 
             if (menuOption.isPresent()) {
@@ -166,12 +162,12 @@ public class UserInterface {
             System.out.println("The fridge is empty");
         } else {
             System.out.println("Items in the fridge:");
-            printListItem();
+            utils.printListItem();
             items.stream()
                     .sorted(Comparator.comparing((Ingredient item) -> item.getNameItem().toLowerCase())
                             .thenComparing(Ingredient::getBestBefore))
                     .forEach(item -> {
-                        String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
+                        String formatted = String.format("%-12s | %6.2f   %-7s | %6.2f kr      | %4s",
                                 item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
                         );
                         System.out.println(formatted);
@@ -185,11 +181,11 @@ public class UserInterface {
      * Prompts the user to add new item to the fridge.
      */
     private void handleAddItem() {
-        String name = readString("Type in name of the new item: ");
-        double quantity = readDouble("Type quantity of item: ");
-        String unit = readString("Type unit of measurement (L, dL, kg, grams or pieces): ");
-        double price = readDouble("Price per unit: ");
-        LocalDate bestBefore = readDate("Type in best before date (dd-MM-yyyy): ");
+        String name = utils.readString("Type in name of the new item: ");
+        double quantity = utils.readDouble("Type quantity of item: ");
+        String unit = utils.readString("Type unit of measurement (L, dL, kg, grams or pieces): ");
+        double price = utils.readDouble("Price per unit: ");
+        LocalDate bestBefore = utils.readDate("Type in best before date (dd-MM-yyyy): ");
 
         String message = foodStorage.addItem(new Ingredient(name, quantity, unit, price, bestBefore));
         System.out.println(message);
@@ -199,8 +195,8 @@ public class UserInterface {
      * Prompts the user to remove item from the fridge.
      */
     private void handleRemoveItem() {
-        String name = readString("Type in the item you want to remove: ");
-        double quantity = readDouble("Type in the quantity you want to remove: ");
+        String name = utils.readString("Type in the item you want to remove: ");
+        double quantity = utils.readDouble("Type in the quantity you want to remove: ");
 
         String message = foodStorage.removeItem(name, quantity);
         System.out.println(message);
@@ -211,14 +207,14 @@ public class UserInterface {
      * Displays the matching item sorted by name and date.
      */
     private void handleSearchItem() {
-        String name = readString("Type in item name: ");
+        String name = utils.readString("Type in item name: ");
         List<Ingredient> matchingItems = foodStorage.searchItem(name);
 
         if (matchingItems.isEmpty()) {
             System.out.println("No matching item with the name: " + name);
         } else {
             System.out.println("Items found with the name: " + name);
-            printListItem();
+            utils.printListItem();
             matchingItems.stream()
                     .sorted(Comparator.comparing(Ingredient::getBestBefore))
                     .forEach(item -> {
@@ -235,14 +231,14 @@ public class UserInterface {
      * Prompts the user to search items by best-before date.
      */
     private void handleShowItemByDate() {
-        LocalDate date = readDate("Enter a date (dd-MM-yyyy): ");
+        LocalDate date = utils.readDate("Enter a date (dd-MM-yyyy): ");
                 List<Ingredient> itemByDate = foodStorage.searchItemByDate(date);
 
         if (itemByDate.isEmpty()) {
             System.out.println("No item found with the best-before-date " + date);
         } else {
             System.out.println("Items with the best-before-date " + date + ":");
-            printListItem();
+            utils.printListItem();
             itemByDate.forEach(item -> {
                 String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
                         item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore());
@@ -263,7 +259,7 @@ public class UserInterface {
             System.out.println("No items have expired!");
         } else {
             System.out.println("Expired items:");
-            printListItem();
+            utils.printListItem();
             expiredItems.forEach(item -> {
                 String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
                         item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore() );
@@ -313,10 +309,10 @@ public class UserInterface {
     public void handleAddRecipe() {
         System.out.println("Step 1. Writing the recipe");
         System.out.println("------------------------------");
-        String name = readString("Type in name of the new recipe: ");
-        String description = readString("Type in a short description of the recipe: ");
-        String instruction = readString("Type in instructions for recipe: ");
-        int servings = readInt("Type in the number of servings: ");
+        String name = utils.readString("Type in name of the new recipe: ");
+        String description = utils.readString("Type in a short description of the recipe: ");
+        String instruction = utils.readString("Type in instructions for recipe: ");
+        int servings = utils.readInt("Type in the number of servings: ");
         System.out.println("Step 2. Adding ingredients with its quantity and unit for the recipe:");
         System.out.println("------------------------------------------------------------------------");
 
@@ -324,12 +320,12 @@ public class UserInterface {
         boolean addMoreIngredients = true;
 
         while (addMoreIngredients) {
-            String ingredientName = readString("Type in an ingredient: ");
-            double ingredientQuantity = readDouble("Type in quantity: ");
-            String ingredientUnit = readString("Type in unit (e.g dl, grams or pieces): ");
+            String ingredientName = utils.readString("Type in an ingredient: ");
+            double ingredientQuantity = utils.readDouble("Type in quantity: ");
+            String ingredientUnit = utils.readString("Type in unit (e.g dl, grams or pieces): ");
 
             ingredients.add(new Ingredient(ingredientName, ingredientQuantity, ingredientUnit, 0.0, LocalDate.MAX));
-            addMoreIngredients = readString("Do you want to add another ingredient? (yes/no): ")
+            addMoreIngredients = utils.readString("Do you want to add another ingredient? (yes/no): ")
                     .equalsIgnoreCase("yes");
         }
         Recipe recipe = new Recipe(name, description, instruction, ingredients, servings);
@@ -338,105 +334,16 @@ public class UserInterface {
     }
 
     public void handleRemoveRecipe() {
-        String name = readString("Type in name of the recipe to remove: ");
+        String name = utils.readString("Type in name of the recipe to remove: ");
         String result = cookBook.removeRecipe(name);
         System.out.println(result);
     }
 
     public void handleCheckRecipe() {
-        String nameRecipe = readString("Type in recipe name: ");
+        String nameRecipe = utils.readString("Type in recipe name: ");
     }
 
     public void handleSuggestRecipe() {
 
-    }
-
-    /**
-     * Reads a non-empty "string" input from user.
-     * Continues to prompt until a valid input is entered.
-     *
-     * @param prompt the message displayed to the user to guide input
-     * @return the user's input as a non-empty string
-     */
-    private String readString(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String input = scanner.nextLine().trim();
-            if (!input.isBlank() && input.matches("[a-zA-ZÆØÅæøå\\s]+")) {
-                return input;
-            }
-            System.out.println("Invalid input, please try again. ");
-        }
-    }
-
-    /**
-     * Reads an "int" input from user.
-     * Continues to prompt until valid input is entered.
-     *
-     * @param prompt the message displayed to the user to guide input
-     * @return the user's input as an int
-     */
-    private int readInt(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            try {
-                return Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.print("Invalid input, please enter a number. ");
-            }
-        }
-    }
-
-    /**
-     * Reads a positive "double" value from user.
-     * Ensure that the value is greater than zero.
-     * Continues to prompt until valid input is entered.
-     *
-     * @param prompt the message displayed to the user to guide input
-     * @return the user's input as a positive double
-     */
-    private double readDouble(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            try {
-                double value = Double.parseDouble(scanner.nextLine().trim());
-                if (value > 0) {
-                    return value;
-                }
-                System.out.print("Invalid input, quantity cannot be negative. Please try again. ");
-            } catch (NumberFormatException e) {
-                System.out.print("Invalid input, please enter a number. ");
-            }
-        }
-    }
-
-    /**
-     * Reads a date input from user in the format "dd-MM-yyyy"
-     * Continues to prompt until valid input is entered.
-     *
-     * @param prompt the message displayed to the user to guide input
-     * @return the user's input as a LocalDate
-     */
-    private LocalDate readDate(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            try {
-                return LocalDate.parse(scanner.nextLine(), dateTimeFormat);
-            } catch (DateTimeParseException e) {
-                System.out.print("Invalid date format, please use dd-MM-yyy.");
-            }
-        }
-    }
-
-    /**
-     * Prints the table header for displaying items in fridge.
-     * This includes columns for the item name, quantity, unit, price per unit and best-before date.
-     * The method is to ensure consistent formatting across different output
-     * such as showing all items, search for items or show expired items.
-     */
-    private void printListItem() {
-        System.out.println();
-        System.out.println("Name         | Quantity  Unit    | Price per unit | Best before date   ");
-        System.out.println("--------------------------------------------------------------------");
     }
 }
