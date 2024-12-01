@@ -37,10 +37,24 @@ public class CookBook {
         return new ArrayList<>(recipes);
     }
 
-    public List<Recipe> searchRecipe(String recipeName) {
+    public String expandRecipe(String recipeName) {
         return recipes.stream()
-                .filter(recipe -> recipe.getNameRecipe().equals(recipeName))
-                .toList();
+                .filter(recipe -> recipe.getNameRecipe().equalsIgnoreCase(recipeName))
+                .findFirst()
+                .map(recipe -> {
+                    StringBuilder details = new StringBuilder(); // En klasse endrer innhold uten å opprette nye objekter (mutable)
+                    details.append("Recipe name: ").append(recipe.getNameRecipe()).append("\n");
+                    details.append("Recipe description: ").append(recipe.getDescriptionRecipe()).append("\n");
+                    details.append("Recipe instructions: ").append(recipe.getInstructionsRecipe()).append("\n");
+                    details.append("Ingredients: \n");
+                    recipe.getIngredientsRecipe().forEach(ingredient ->
+                        details.append(String.format("- %s: %.2f %s\n",
+                                ingredient.getNameItem(), ingredient.getQuantityItem(), ingredient.getUnitItem()))
+                    );
+                    details.append("Servings: ").append(recipe.getServingsRecipe()).append("\n");
+                    return details.toString();
+                })
+                .orElse("Recipe not found in cookbook");
     }
 
     public boolean canMakeRecipe(Recipe recipe, List<Ingredient> fridgeItems) {

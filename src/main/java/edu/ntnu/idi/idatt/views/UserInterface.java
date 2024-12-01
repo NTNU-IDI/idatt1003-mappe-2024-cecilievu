@@ -28,11 +28,12 @@ public class UserInterface {
         SHOW_EXPIRED(6, "Show expired items"),
         SHOW_TOTAL_VALUE(7, "Show total value in the fridge"),
         SHOW_ALL_RECIPES(8, "Show all recipes"),
-        ADD_NEW_RECIPE(9, "Add new recipe"),
-        REMOVE_RECIPE(10, "Remove recipe"),
-        CHECK_RECIPE(11, "Check if a recipe can be made"),
-        SUGGEST_RECIPE(12, "Suggest recipes from items in fridge"),
-        EXIT(13, "End program");
+        EXPAND_RECIPE(9, "Expand a recipe"),
+        ADD_NEW_RECIPE(10, "Add new recipe"),
+        REMOVE_RECIPE(11, "Remove recipe"),
+        CHECK_RECIPE(12, "Check if a recipe can be made"),
+        SUGGEST_RECIPE(13, "Suggest recipes from items in fridge"),
+        EXIT(14, "End program");
 
         private final int value;
         private final String description;
@@ -67,7 +68,7 @@ public class UserInterface {
     public void init() {
         // Forhåndsdefinerte varer
         foodStorage.addItem(new Ingredient("Egg", 12, "pieces", 2.0, LocalDate.of(2024, 12, 24)));
-        foodStorage.addItem(new Ingredient( "Milk", 3, "L", 10.0, LocalDate.of(2024,12,24)));
+        foodStorage.addItem(new Ingredient( "Milk", 3, "dL", 10.0, LocalDate.of(2024,12,24)));
         foodStorage.addItem(new Ingredient("Butter", 250, "grams", 0.1, LocalDate.of(2024,12,24)));
         foodStorage.addItem(new Ingredient("Flour", 1000, "grams",0.03, LocalDate.of(2024,12,24)));
 
@@ -80,21 +81,20 @@ public class UserInterface {
                 new Ingredient("Baking soda", 6, "grams", 0.0, LocalDate.MAX),
                 new Ingredient("Sugar", 9, "grams", 0.0, LocalDate.MAX)
         );
-        Recipe pancakeRecipe = new Recipe(
-                "Pancakes",
-                "Usually a breakfast dish, a thin and round cake",
-                "Mix all ingredients together, pour batter in a pan an cook until golden",
+        Recipe pannekakeRecipe = new Recipe(
+                "Pannekake",
+                "Classic norwegian pancakes, thin and delicious",
+                "Mix all ingredients, pour batter in a pan an cook until golden",
                 pancakesIngredient,
                 4
         );
-        cookBook.addRecipe(pancakeRecipe);
+        cookBook.addRecipe(pannekakeRecipe);
     }
 
     /**
      * Starts the application, representing the menu and handling user input.
      */
     public void start() {
-        init();
         Map<MenuOption, Runnable> actions = createActions(); // Kartlegging av menyvalg til funksjoner
 
         while(true) {
@@ -131,6 +131,7 @@ public class UserInterface {
         actions.put(MenuOption.SHOW_EXPIRED, this::handleShowExpiredItems);
         actions.put(MenuOption.SHOW_TOTAL_VALUE, this::handleShowTotalValue);
         actions.put(MenuOption.SHOW_ALL_RECIPES, this::handleShowRecipe);
+        actions.put(MenuOption.EXPAND_RECIPE, this::handleExpandRecipe);
         actions.put(MenuOption.ADD_NEW_RECIPE, this::handleAddRecipe);
         actions.put(MenuOption.REMOVE_RECIPE, this::handleRemoveRecipe);
         actions.put(MenuOption.CHECK_RECIPE, this::handleCheckRecipe);
@@ -145,7 +146,7 @@ public class UserInterface {
         System.out.println("============== Menu ==============");
         System.out.println(" - Manage items in the fridge - ");
         for (MenuOption option : MenuOption.values()) {
-            if (option.getValue() == 8) {
+            if (option.getValue() == 7) {
                 System.out.println();
                 System.out.println(" - Cookbook - ");
             }
@@ -167,7 +168,7 @@ public class UserInterface {
                     .sorted(Comparator.comparing((Ingredient item) -> item.getNameItem().toLowerCase())
                             .thenComparing(Ingredient::getBestBefore))
                     .forEach(item -> {
-                        String formatted = String.format("%-12s | %6.2f   %-7s | %6.2f kr      | %4s",
+                        String formatted = String.format("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
                                 item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
                         );
                         System.out.println(formatted);
@@ -183,7 +184,7 @@ public class UserInterface {
     private void handleAddItem() {
         String name = utils.readString("Type in name of the new item: ");
         double quantity = utils.readDouble("Type quantity of item: ");
-        String unit = utils.readString("Type unit of measurement (L, dL, kg, grams or pieces): ");
+        String unit = utils.readString("Type unit of measurement (e.g dL, grams or pieces): ");
         double price = utils.readDouble("Price per unit: ");
         LocalDate bestBefore = utils.readDate("Type in best before date (dd-MM-yyyy): ");
 
@@ -218,7 +219,7 @@ public class UserInterface {
             matchingItems.stream()
                     .sorted(Comparator.comparing(Ingredient::getBestBefore))
                     .forEach(item -> {
-                        String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
+                        String formatted = String.format("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
                                 item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
                         );
                         System.out.println(formatted);
@@ -232,7 +233,7 @@ public class UserInterface {
      */
     private void handleShowItemByDate() {
         LocalDate date = utils.readDate("Enter a date (dd-MM-yyyy): ");
-                List<Ingredient> itemByDate = foodStorage.searchItemByDate(date);
+                List<Ingredient> itemByDate = foodStorage.getItemsBeforeDate(date);
 
         if (itemByDate.isEmpty()) {
             System.out.println("No item found with the best-before-date " + date);
@@ -240,7 +241,7 @@ public class UserInterface {
             System.out.println("Items with the best-before-date " + date + ":");
             utils.printListItem();
             itemByDate.forEach(item -> {
-                String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
+                String formatted = String.format("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
                         item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore());
                 System.out.println(formatted);
             });
@@ -261,7 +262,7 @@ public class UserInterface {
             System.out.println("Expired items:");
             utils.printListItem();
             expiredItems.forEach(item -> {
-                String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
+                String formatted = String.format("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
                         item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore() );
                 System.out.println(formatted);
             });
@@ -292,6 +293,7 @@ public class UserInterface {
             System.out.println("There's no recipes in the cookbook.");
         } else {
             System.out.println("Recipes in the cookbook: ");
+            System.out.println();
             System.out.println("Name       | Description                                        | Servings");
             System.out.println("-------------------------------------------------------");
             recipes.stream()
@@ -304,6 +306,13 @@ public class UserInterface {
                     });
             System.out.println();
         }
+    }
+
+    public void handleExpandRecipe() {
+        String nameRecipe = utils.readString("Type in recipe name: ");
+        String message = cookBook.expandRecipe(nameRecipe);
+        System.out.println();
+        System.out.println(message);
     }
 
     public void handleAddRecipe() {
@@ -341,6 +350,7 @@ public class UserInterface {
 
     public void handleCheckRecipe() {
         String nameRecipe = utils.readString("Type in recipe name: ");
+
     }
 
     public void handleSuggestRecipe() {
