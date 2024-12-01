@@ -91,7 +91,7 @@ public class Utils {
      */
     public void printListItem() {
         System.out.println();
-        System.out.println("Name         | Quantity  Unit    | Price per unit | Best before date   ");
+        System.out.println("Name         | Quantity  Unit   | Price per unit | Best before date   ");
         System.out.println("--------------------------------------------------------------------");
     }
 }

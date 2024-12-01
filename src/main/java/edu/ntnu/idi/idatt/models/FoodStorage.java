@@ -82,7 +82,7 @@ public class FoodStorage {
      * @param date the specific date
      * @return ingredients that expires before the date
      */
-    public List<Ingredient> searchItemByDate(LocalDate date) {
+    public List<Ingredient> getItemsBeforeDate(LocalDate date) {
         return new ArrayList<>( // 2. making it mutable from toList()
                 items.stream()
                         .filter(item -> item.getBestBefore().isBefore(date))
