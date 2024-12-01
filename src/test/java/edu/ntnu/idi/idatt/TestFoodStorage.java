@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt;
 
+import edu.ntnu.idi.idatt.models.Ingredient;
+
 import java.util.ArrayList;
 
 /**

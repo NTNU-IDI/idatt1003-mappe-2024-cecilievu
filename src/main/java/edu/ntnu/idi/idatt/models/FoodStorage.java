@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt;
+package edu.ntnu.idi.idatt.models;
 
 import java.time.LocalDate; //Newer version than util.date (help from Co-pilot)
 import java.util.ArrayList;

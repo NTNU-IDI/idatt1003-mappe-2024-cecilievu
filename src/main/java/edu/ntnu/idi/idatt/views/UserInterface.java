@@ -1,4 +1,9 @@
-package edu.ntnu.idi.idatt;
+package edu.ntnu.idi.idatt.views;
+
+import edu.ntnu.idi.idatt.models.CookBook;
+import edu.ntnu.idi.idatt.models.FoodStorage;
+import edu.ntnu.idi.idatt.models.Ingredient;
+import edu.ntnu.idi.idatt.models.Recipe;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -82,7 +87,7 @@ public class UserInterface {
         );
         Recipe pancakeRecipe = new Recipe(
                 "Pancakes",
-                "Usually a breakfast dish, thin and round cake",
+                "Usually a breakfast dish, a thin and round cake",
                 "Mix all ingredients together, pour batter in a pan an cook until golden",
                 pancakesIngredient,
                 4
@@ -141,9 +146,14 @@ public class UserInterface {
      * Prints menu display for the user.
      */
     private void printMenu() {
-        System.out.println("============= Menu =============");
+        System.out.println("============== Menu ==============");
+        System.out.println(" - Manage items in the fridge - ");
         for (MenuOption option : MenuOption.values()) {
-            System.out.printf("%d. %s%n", option.getValue(), option.getDescription()); //
+            if (option.getValue() == 8) {
+                System.out.println();
+                System.out.println(" - Cookbook - ");
+            }
+            System.out.printf("%d. %s%n", option.getValue(), option.getDescription());
         }
     }
 
@@ -161,7 +171,7 @@ public class UserInterface {
                     .sorted(Comparator.comparing((Ingredient item) -> item.getNameItem().toLowerCase())
                             .thenComparing(Ingredient::getBestBefore))
                     .forEach(item -> {
-                        String formatted = String.format("%-8s      | %7.2f   %-7s | %6.2f kr      | %4s",
+                        String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
                                 item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
                         );
                         System.out.println(formatted);
@@ -212,7 +222,7 @@ public class UserInterface {
             matchingItems.stream()
                     .sorted(Comparator.comparing(Ingredient::getBestBefore))
                     .forEach(item -> {
-                        String formatted = String.format("%-8s      | %7.2f   %-7s | %6.2f kr      | %4s",
+                        String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
                                 item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore()
                         );
                         System.out.println(formatted);
@@ -234,7 +244,7 @@ public class UserInterface {
             System.out.println("Items with the best-before-date " + date + ":");
             printListItem();
             itemByDate.forEach(item -> {
-                String formatted = String.format("%-8s      | %7.2f   %-7s | %6.2f kr      | %4s",
+                String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
                         item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore());
                 System.out.println(formatted);
             });
@@ -255,7 +265,7 @@ public class UserInterface {
             System.out.println("Expired items:");
             printListItem();
             expiredItems.forEach(item -> {
-                String formatted = String.format("%-8s | %7.2f   %-7s | %6.2f kr      | %4s",
+                String formatted = String.format("%-12s | %7.2f   %-7s | %6.2f kr      | %4s",
                         item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(), item.getBestBefore() );
                 System.out.println(formatted);
             });
@@ -286,12 +296,12 @@ public class UserInterface {
             System.out.println("There's no recipes in the cookbook.");
         } else {
             System.out.println("Recipes in the cookbook: ");
-            System.out.println("Name        | Description                  | Servings");
+            System.out.println("Name       | Description                                        | Servings");
             System.out.println("-------------------------------------------------------");
             recipes.stream()
                     .sorted(Comparator.comparing(recipe -> recipe.getNameRecipe().toLowerCase()))
                     .forEach(recipe -> {
-                        String formatted = String.format("%-14s | %-30s | %d",
+                        String formatted = String.format("%-10s | %-50s | %d",
                                 recipe.getNameRecipe(), recipe.getDescriptionRecipe(), recipe.getServingsRecipe()
                         );
                         System.out.println(formatted);
@@ -426,7 +436,7 @@ public class UserInterface {
      */
     private void printListItem() {
         System.out.println();
-        System.out.println("Name          | Quantity  Unit    | Price per unit | Best before date   ");
-        System.out.println("---------------------------------------------------------------------");
+        System.out.println("Name         | Quantity  Unit    | Price per unit | Best before date   ");
+        System.out.println("--------------------------------------------------------------------");
     }
 }

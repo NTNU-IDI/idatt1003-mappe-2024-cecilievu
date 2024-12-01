@@ -1,6 +1,5 @@
-package edu.ntnu.idi.idatt;
+package edu.ntnu.idi.idatt.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Recipe {
