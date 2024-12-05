@@ -31,7 +31,7 @@ public class UserInterface {
         EXPAND_RECIPE(9, "Expand a recipe"),
         ADD_NEW_RECIPE(10, "Add new recipe"),
         REMOVE_RECIPE(11, "Remove recipe"),
-        CHECK_RECIPE(12, "Check if a recipe can be made"),
+        CHECK_RECIPE(12, "Check if a recipe can be made from items in fridge"),
         SUGGEST_RECIPE(13, "Suggest recipes from items in fridge"),
         EXIT(14, "End program");
 
@@ -67,28 +67,10 @@ public class UserInterface {
      */
     public void init() {
         // Forhåndsdefinerte varer
-        foodStorage.addItem(new Ingredient("Egg", 12, "pieces", 2.0, LocalDate.of(2024, 12, 24)));
-        foodStorage.addItem(new Ingredient( "Milk", 3, "dL", 10.0, LocalDate.of(2024,12,24)));
-        foodStorage.addItem(new Ingredient("Butter", 250, "grams", 0.1, LocalDate.of(2024,12,24)));
-        foodStorage.addItem(new Ingredient("Flour", 1000, "grams",0.03, LocalDate.of(2024,12,24)));
+        TestData.getPreDefinedItems().forEach(foodStorage::addItem);
 
         // Forhåndsdefinterte oppskrifter
-        List<Ingredient> pancakesIngredient = List.of(
-                new Ingredient("Egg", 2, "pieces", 0.0, LocalDate.MAX),
-                new Ingredient("Milk", 0.25, "L", 0.0, LocalDate.MAX),
-                new Ingredient("Butter", 50, "grams", 0.0, LocalDate.MAX),
-                new Ingredient("Flour", 150, "grams", 0.0, LocalDate.MAX),
-                new Ingredient("Baking soda", 6, "grams", 0.0, LocalDate.MAX),
-                new Ingredient("Sugar", 9, "grams", 0.0, LocalDate.MAX)
-        );
-        Recipe pannekakeRecipe = new Recipe(
-                "Pannekake",
-                "Classic norwegian pancakes, thin and delicious",
-                "Mix all ingredients, pour batter in a pan an cook until golden",
-                pancakesIngredient,
-                4
-        );
-        cookBook.addRecipe(pannekakeRecipe);
+        TestData.getPreDefineRecipes().forEach(cookBook::addRecipe);
     }
 
     /**
@@ -104,7 +86,7 @@ public class UserInterface {
 
             if (menuOption.isPresent()) {
                 if (menuOption.get() == MenuOption.EXIT) {
-                    System.out.println("Ending program... Goodbye!");
+                    System.out.println("Thank you for using the Fridge and Cookbook Manager. See you next time! :)");
                     break;
                 }
                 actions.get(menuOption.get()).run(); // Runs the chosen action
@@ -143,10 +125,10 @@ public class UserInterface {
      * Prints menu display for the user.
      */
     private void printMenu() {
-        System.out.println("============== Menu ==============");
+        System.out.println("============== Fridge and Cookbook Manager ==============");
         System.out.println(" - Manage items in the fridge - ");
         for (MenuOption option : MenuOption.values()) {
-            if (option.getValue() == 7) {
+            if (option.getValue() == 8) {
                 System.out.println();
                 System.out.println(" - Cookbook - ");
             }
@@ -292,14 +274,12 @@ public class UserInterface {
         if (recipes.isEmpty()) {
             System.out.println("There's no recipes in the cookbook.");
         } else {
-            System.out.println("Recipes in the cookbook: ");
-            System.out.println();
-            System.out.println("Name       | Description                                        | Servings");
-            System.out.println("-------------------------------------------------------");
+            utils.printListRecipes();
+
             recipes.stream()
                     .sorted(Comparator.comparing(recipe -> recipe.getNameRecipe().toLowerCase()))
                     .forEach(recipe -> {
-                        String formatted = String.format("%-10s | %-50s | %d",
+                        String formatted = String.format("%-18s | %-50s | %d",
                                 recipe.getNameRecipe(), recipe.getDescriptionRecipe(), recipe.getServingsRecipe()
                         );
                         System.out.println(formatted);
@@ -317,13 +297,13 @@ public class UserInterface {
 
     public void handleAddRecipe() {
         System.out.println("Step 1. Writing the recipe");
-        System.out.println("------------------------------");
+        System.out.println("----------------------------");
         String name = utils.readString("Type in name of the new recipe: ");
         String description = utils.readString("Type in a short description of the recipe: ");
         String instruction = utils.readString("Type in instructions for recipe: ");
         int servings = utils.readInt("Type in the number of servings: ");
         System.out.println("Step 2. Adding ingredients with its quantity and unit for the recipe:");
-        System.out.println("------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------");
 
         List<Ingredient> ingredients = new ArrayList<>();
         boolean addMoreIngredients = true;
@@ -349,7 +329,10 @@ public class UserInterface {
     }
 
     public void handleCheckRecipe() {
-        String nameRecipe = utils.readString("Type in recipe name: ");
+        String recipeName = utils.readString("Type in recipe name: ");
+        String result = cookBook.canMakeRecipe(recipeName, foodStorage);
+        System.out.println();
+        System.out.println(result);
 
     }
 
