@@ -26,6 +26,14 @@ public class FoodStorage {
     //shorter but also more readable
 
     /**
+     * Display items in the fridge in a copy of the ingredient list.
+     * This makes sure that the list is immutability.
+     */
+    public List<Ingredient> getItems() {
+        return new ArrayList<>(items);
+    }
+
+    /**
      * Adds new items to the food storage.
      * (ifPresentOrElse) if an item has the same name, best before date and price,
      * it will be added to an existing item and their quantities.
@@ -48,47 +56,6 @@ public class FoodStorage {
                 );
 
         return String.format("%.2f of %s has been added to the fridge!", newItem.getQuantityItem(), newItem.getNameItem());
-    }
-
-    /**
-     * Display items in the fridge in a copy of the ingredient list.
-     * This makes sure that the list is immutability.
-     */
-    public List<Ingredient> getItems() {
-        return new ArrayList<>(items);
-    }
-
-    /**
-     * Searching for a specific item by name in the fridge.
-     * .collect will make sure the found items will be displayed
-     * in a new ArrayList (copy).
-     * The displayed list will show the found items by date
-     *
-     * @return the item if found, or null if not
-     */
-    public List<Ingredient> searchItem(String name){
-        return new ArrayList<>( // 2. making it mutable from toList()
-                items.stream()
-                .filter(item -> item.getNameItem().equalsIgnoreCase(name))
-                .sorted(Comparator.comparing(Ingredient::getBestBefore))
-                .toList() // 1. making an immutable list
-        );
-    }
-
-    /**
-     * Searching for ingredients that expires by a specific date.
-     * .toList() it immutable
-     *
-     * @param date the specific date
-     * @return ingredients that expires before the date
-     */
-    public List<Ingredient> getItemsBeforeDate(LocalDate date) {
-        return new ArrayList<>( // 2. making it mutable from toList()
-                items.stream()
-                        .filter(item -> item.getBestBefore().isBefore(date))
-                        .sorted(Comparator.comparing(Ingredient::getBestBefore))
-                        .toList() // 1. making an immutable list
-        );
     }
 
     /**
@@ -125,7 +92,38 @@ public class FoodStorage {
         return String.format("%.2f of %s is removed. Item is now out of stock.", quantity, name);
     }
 
+    /**
+     * Searching for a specific item by name in the fridge.
+     * .collect will make sure the found items will be displayed
+     * in a new ArrayList (copy).
+     * The displayed list will show the found items by date
+     *
+     * @return the item if found, or null if not
+     */
+    public List<Ingredient> searchItem(String name){
+        return new ArrayList<>( // 2. making it mutable from toList()
+                items.stream()
+                .filter(item -> item.getNameItem().equalsIgnoreCase(name))
+                .sorted(Comparator.comparing(Ingredient::getBestBefore))
+                .toList() // 1. making an immutable list
+        );
+    }
 
+    /**
+     * Searching for ingredients that expires by a specific date.
+     * .toList() it immutable
+     *
+     * @param date the specific date
+     * @return ingredients that expires before the date
+     */
+    public List<Ingredient> getItemsBeforeDate(LocalDate date) {
+        return new ArrayList<>( // 2. making it mutable from toList()
+                items.stream()
+                        .filter(item -> item.getBestBefore().isBefore(date))
+                        .sorted(Comparator.comparing(Ingredient::getBestBefore))
+                        .toList() // 1. making an immutable list
+        );
+    }
 
     //Chat
     /**
@@ -144,7 +142,7 @@ public class FoodStorage {
     /**
      * Calculates the total value of all items in the fridge
      *
-     * @return the total valye
+     * @return the total value
      */
     public double calculateTotalValue() {
         return items.stream()
