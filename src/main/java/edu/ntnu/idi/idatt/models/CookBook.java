@@ -11,6 +11,30 @@ public class CookBook {
         this.recipes = new ArrayList<>();
     }
 
+    public List<Recipe> getRecipes() {
+        return new ArrayList<>(recipes);
+    }
+
+    public String expandRecipe(String recipeName) {
+        return recipes.stream()
+                .filter(recipe -> recipe.getNameRecipe().equalsIgnoreCase(recipeName))
+                .findFirst()
+                .map(recipe -> {
+                    StringBuilder details = new StringBuilder(); // En klasse endrer innhold uten å opprette nye objekter (mutable)
+                    details.append("Recipe name: ").append(recipe.getNameRecipe()).append("\n");
+                    details.append("Recipe description: ").append(recipe.getDescriptionRecipe()).append("\n");
+                    details.append("Recipe instructions: ").append(recipe.getInstructionsRecipe()).append("\n");
+                    details.append("Ingredients: \n");
+                    recipe.getIngredientsRecipe().forEach(ingredient ->
+                            details.append(String.format("- %s: %.2f %s\n",
+                                    ingredient.getNameItem(), ingredient.getQuantityItem(), ingredient.getUnitItem()))
+                    );
+                    details.append("Servings: ").append(recipe.getServingsRecipe()).append("\n");
+                    return details.toString();
+                })
+                .orElse("Recipe not found in cookbook");
+    }
+
     public String addRecipe(Recipe newRecipe) {
         if (recipes.stream().anyMatch(r -> r.getNameRecipe().equals(newRecipe.getNameRecipe()))) {
             return String.format("A recipe with the name '%s' already exist in the cookbook.", newRecipe.getNameRecipe());
@@ -33,36 +57,41 @@ public class CookBook {
         }
     }
 
-    public List<Recipe> getRecipes() {
-        return new ArrayList<>(recipes);
-    }
-
-    public String expandRecipe(String recipeName) {
-        return recipes.stream()
-                .filter(recipe -> recipe.getNameRecipe().equalsIgnoreCase(recipeName))
+    public String canMakeRecipe(String recipeName, FoodStorage foodStorage) {
+        // Finner oppskrift basert på navn
+        Recipe recipe = recipes.stream()
+                .filter(r -> r.getNameRecipe().equalsIgnoreCase(recipeName))
                 .findFirst()
-                .map(recipe -> {
-                    StringBuilder details = new StringBuilder(); // En klasse endrer innhold uten å opprette nye objekter (mutable)
-                    details.append("Recipe name: ").append(recipe.getNameRecipe()).append("\n");
-                    details.append("Recipe description: ").append(recipe.getDescriptionRecipe()).append("\n");
-                    details.append("Recipe instructions: ").append(recipe.getInstructionsRecipe()).append("\n");
-                    details.append("Ingredients: \n");
-                    recipe.getIngredientsRecipe().forEach(ingredient ->
-                        details.append(String.format("- %s: %.2f %s\n",
-                                ingredient.getNameItem(), ingredient.getQuantityItem(), ingredient.getUnitItem()))
-                    );
-                    details.append("Servings: ").append(recipe.getServingsRecipe()).append("\n");
-                    return details.toString();
-                })
-                .orElse("Recipe not found in cookbook");
-    }
+                .orElse(null);
 
-    public boolean canMakeRecipe(Recipe recipe, List<Ingredient> fridgeItems) {
-        return recipe.getIngredientsRecipe().stream().allMatch(recipeIngredient ->
-                fridgeItems.stream().anyMatch(fridgeIngredient -> fridgeIngredient.getNameItem().equals(recipeIngredient.getNameItem()) &&
-                        fridgeIngredient.getQuantityItem() >= recipeIngredient.getQuantityItem()
-                )
-        );
+        if (recipe == null) {
+            return "Recipe not found in cookbook"; // Avslutter hvis oppskriften ikke finnes
+        }
+
+        StringBuilder result = new StringBuilder();
+        boolean canMake = true;
+
+        // Sjekker om alle ingredienser er i kjøleskapet
+        for (Ingredient ingredient : recipe.getIngredientsRecipe()) {
+            Ingredient available = foodStorage.getItems().stream()
+                    .filter(item -> item.getNameItem().equalsIgnoreCase(ingredient.getNameItem()))
+                    .findFirst()
+                    .orElse(null);
+
+            // Hvis ingrediensene ikke finnes eller det er for lite av den
+            if (available == null || available.getQuantityItem() < ingredient.getQuantityItem()) {
+                double missingAmount = ingredient.getQuantityItem() - (available == null ? 0 : available.getQuantityItem());
+                result.append(String.format("Missing: %s (you need %.2f %s)\n", ingredient.getNameItem(), missingAmount, ingredient.getUnitItem()));
+                canMake = false;
+            }
+        }
+
+        if (canMake) {
+            return "You have all the ingredients to make " + recipeName + "!\n";
+        }
+
+        result.insert(0, "You do not have all the ingredients to make " + recipeName + "\n");
+        return result.toString();
     }
 
     public void suggestRecipe() {
