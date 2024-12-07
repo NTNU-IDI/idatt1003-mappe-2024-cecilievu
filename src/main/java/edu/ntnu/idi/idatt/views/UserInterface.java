@@ -166,7 +166,7 @@ public class UserInterface {
     private void handleAddItem() {
         String name = utils.readString("Type in name of the new item: ");
         double quantity = utils.readDouble("Type quantity of item: ");
-        String unit = utils.readString("Type unit of measurement (e.g dL, grams or pieces): ");
+        String unit = utils.readString("Type unit of measurement (e.g dL, grams or pcs): ");
         double price = utils.readDouble("Price per unit: ");
         LocalDate bestBefore = utils.readDate("Type in best before date (dd-MM-yyyy): ");
 
@@ -311,7 +311,7 @@ public class UserInterface {
         while (addMoreIngredients) {
             String ingredientName = utils.readString("Type in an ingredient: ");
             double ingredientQuantity = utils.readDouble("Type in quantity: ");
-            String ingredientUnit = utils.readString("Type in unit (e.g dl, grams or pieces): ");
+            String ingredientUnit = utils.readString("Type in unit (e.g dl, grams or pcs): ");
 
             ingredients.add(new Ingredient(ingredientName, ingredientQuantity, ingredientUnit, 0.0, LocalDate.MAX));
             addMoreIngredients = utils.readString("Do you want to add another ingredient? (yes/no): ")
@@ -337,6 +337,12 @@ public class UserInterface {
     }
 
     public void handleSuggestRecipe() {
-
+        List<String> suggestions = cookBook.suggestRecipe(foodStorage);
+        if (suggestions.isEmpty()) {
+            System.out.println("No recipe can be made with the current items in the fridge");
+        } else {
+            System.out.println("You can make the following recipes from items in the fridge: ");
+            suggestions.forEach(recipe -> System.out.println("- " + recipe));
+        }
     }
 }

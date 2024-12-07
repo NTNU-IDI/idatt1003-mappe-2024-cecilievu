@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CookBook {
 
@@ -94,7 +95,18 @@ public class CookBook {
         return result.toString();
     }
 
-    public void suggestRecipe() {
-
+    public List<String> suggestRecipe(FoodStorage foodStorage) {
+        return recipes.stream()
+                .filter(recipe -> recipe.getIngredientsRecipe().stream()
+                        .allMatch(ingredient -> {
+                            Ingredient available = foodStorage.getItems().stream()
+                                    .filter(item -> item.getNameItem().equalsIgnoreCase(ingredient.getNameItem()))
+                                    .findFirst()
+                                    .orElse(null);
+                            return available != null && available.getQuantityItem() >= ingredient.getQuantityItem();
+                        })
+                )
+                .map(Recipe::getNameRecipe)
+                .collect(Collectors.toList());
     }
 }
