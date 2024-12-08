@@ -190,6 +190,7 @@ public class UserInterface {
             double quantity = utils.readDouble("Type in the quantity you want to remove: ");
 
             String message = foodStorage.removeItem(name, quantity);
+            System.out.println();
             System.out.println(message);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());

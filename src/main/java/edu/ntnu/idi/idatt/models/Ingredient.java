@@ -65,11 +65,10 @@ public class Ingredient {
      * @throws IllegalArgumentException if the quantity is negative
      */
     public void setQuantityItem(double quantityItem) {
-        if (quantityItem > 0) {
-            this.quantityItem = quantityItem;
-        } else {
+        if (quantityItem < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative");
         }
+        this.quantityItem = quantityItem;
     }
 
     /**

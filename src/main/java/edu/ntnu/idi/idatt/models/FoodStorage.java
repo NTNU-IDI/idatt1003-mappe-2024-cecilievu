@@ -66,30 +66,32 @@ public class FoodStorage {
      * @throws IllegalArgumentException if the quantity is greater than total quantity of the item
      */
     public String removeItem(String name, double quantity) {
-        items.sort(Comparator.comparing(Ingredient::getBestBefore));
+        double remainingQuantity = quantity;
 
-        double totalQuantity = items.stream()
-                .filter(item -> item.getNameItem().equalsIgnoreCase(name))
-                .mapToDouble(Ingredient::getQuantityItem)
-                .sum();
+        items.sort(Comparator.comparing(Ingredient::getBestBefore)); // Sorterer varer etter best-before date
+        StringBuilder result = new StringBuilder();
 
-        if (totalQuantity < quantity) {
-            throw new IllegalArgumentException(String.format("Not enough %s in stock to remove %.2f. Stock in fridge: %.2f.", name, quantity, totalQuantity));
-        }
+        for (Ingredient item : items) {
+            if (remainingQuantity <= 0) break; // Hvis alt blir fjernet bryter man ut av løkken
 
-        Iterator<Ingredient> iterator = items.iterator();
-        while (iterator.hasNext() && quantity > 0) {
-            Ingredient item = iterator.next();
             if (item.getNameItem().equalsIgnoreCase(name)) {
-                if (item.getQuantityItem() > quantity) {
-                    item.setQuantityItem(item.getQuantityItem() - quantity);
-                    return String.format("%.2f of %s is removed. Remaining in stock: %.2f%n", quantity, name, item.getQuantityItem());
-                } else {
-                    iterator.remove();
-                }
+                double amountToRemove = Math.min(remainingQuantity, item.getQuantityItem()); // Hvor mye vi kan fjerne fra varen
+                item.setQuantityItem(item.getQuantityItem() - amountToRemove); // Oppdaterer mengden i stock
+                remainingQuantity -= amountToRemove; // Oppdaterer hvor mye vi fortsatt må fjerne
+
+                result.append(String.format("%.2f %s of %s with best before %s is removed. Remaining in stock: %.2f\n", amountToRemove, item.getUnitItem(), item.getNameItem(), item.getBestBefore(), item.getQuantityItem()));
             }
         }
-        return String.format("%.2f of %s is removed. Item is now out of stock.", quantity, name);
+
+        // Hvis ikke nok i stock for å fjerne ønsket mengde
+        if (remainingQuantity > 0) {
+            result.append(String.format("Not enough %s in stock to remove %.2f. Stock in fridge: %.2f.", name, quantity, remainingQuantity));
+        }
+
+        items.removeIf(item -> item.getQuantityItem() <= 0);
+        return result.toString();
+
+        //return String.format("%.2f of %s is removed. Item is now out of stock.", quantity, name);
     }
 
     /**
