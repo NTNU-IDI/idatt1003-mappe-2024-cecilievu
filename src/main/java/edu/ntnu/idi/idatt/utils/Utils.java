@@ -99,6 +99,6 @@ public class Utils {
         System.out.println("Recipes in the cookbook: ");
         System.out.println();
         System.out.println("Name               | Description                                        | Servings");
-        System.out.println("--------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------");
     }
 }

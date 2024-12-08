@@ -52,7 +52,7 @@ public class CookBook {
         }
 
         recipes.add(newRecipe);
-        return String.format("The recipe '%s' is added to the cookbook.", newRecipe.getNameRecipe());
+        return String.format("The recipe '%s' is added to the cookbook. \n", newRecipe.getNameRecipe());
     }
 
     public String removeRecipe(String recipeName) {
@@ -63,9 +63,9 @@ public class CookBook {
 
         if (recipeToRemove != null) {
             recipes.remove(recipeToRemove);
-            return String.format("The recipe '%s' is removed from the cookbook.", recipeName);
+            return String.format("The recipe '%s' is removed from the cookbook. \n", recipeName);
         } else {
-            throw new IllegalArgumentException(String.format("The recipe '%s' does not exist in the cookbook.", recipeName));
+            throw new IllegalArgumentException(String.format("The recipe '%s' does not exist in the cookbook.\n", recipeName));
         }
     }
 

@@ -87,6 +87,7 @@ public class UserInterface {
 
             if (menuOption.isPresent()) {
                 if (menuOption.get() == MenuOption.EXIT) {
+                    System.out.println();
                     System.out.println("Thank you for using the Fridge and Cookbook Manager. See you next time! :)");
                     break;
                 }
@@ -251,8 +252,10 @@ public class UserInterface {
         List<Ingredient> expiredItems = foodStorage.getExpiredItems();
 
         if (expiredItems.isEmpty()) {
-            System.out.println("No items have expired!");
+            System.out.println();
+            System.out.println("No items have expired!\n");
         } else {
+            System.out.println();
             System.out.println("Expired items:");
             utils.printListItem();
             expiredItems.forEach(item -> {
@@ -276,7 +279,8 @@ public class UserInterface {
      */
     private void handleShowTotalValue() {
         double totalValue = foodStorage.calculateTotalValue();
-        System.out.printf("Total value of items: %.2f kr%n", totalValue);
+        System.out.println();
+        System.out.printf("Total value of items: %.2f kr", totalValue);
         System.out.println();
     }
 
@@ -315,6 +319,7 @@ public class UserInterface {
 
     public void handleAddRecipe() {
         try {
+            System.out.println();
             System.out.println("Step 1. Writing the recipe");
             System.out.println("----------------------------");
             String name = utils.readString("Type in name of the new recipe: ");
@@ -348,6 +353,7 @@ public class UserInterface {
         try {
             String name = utils.readString("Type in name of the recipe to remove: ");
             String result = cookBook.removeRecipe(name);
+            System.out.println();
             System.out.println(result);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
@@ -364,11 +370,14 @@ public class UserInterface {
 
     public void handleSuggestRecipe() {
         List<String> suggestions = cookBook.suggestRecipe(foodStorage);
+        System.out.println();
         if (suggestions.isEmpty()) {
             System.out.println("No recipe can be made with the current items in the fridge");
+            System.out.println();
         } else {
             System.out.println("You can make the following recipes from items in the fridge: ");
             suggestions.forEach(recipe -> System.out.println("- " + recipe));
+            System.out.println();
         }
     }
 }
