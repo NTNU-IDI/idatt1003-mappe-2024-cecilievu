@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class CookBook {
 
-    private List<Recipe> recipes;
+    private final List<Recipe> recipes;
 
     public CookBook() {
         this.recipes = new ArrayList<>();
@@ -33,13 +33,24 @@ public class CookBook {
                     details.append("Servings: ").append(recipe.getServingsRecipe()).append("\n");
                     return details.toString();
                 })
-                .orElse("Recipe not found in cookbook");
+                .orElseThrow(() -> new IllegalArgumentException("Recipe not found in cookbook"));
     }
 
     public String addRecipe(Recipe newRecipe) {
-        if (recipes.stream().anyMatch(r -> r.getNameRecipe().equals(newRecipe.getNameRecipe()))) {
-            return String.format("A recipe with the name '%s' already exist in the cookbook.", newRecipe.getNameRecipe());
+        // Sjekke at oppskriften ikke er null (NullPointerException)
+        if (newRecipe == null) {
+            throw new IllegalArgumentException("Recipe cannot be null");
         }
+        if (newRecipe.getNameRecipe() == null || newRecipe.getNameRecipe().isEmpty()) {
+            throw new IllegalArgumentException("Recipe name cannot be null or empty");
+        }
+        if (newRecipe.getIngredientsRecipe() == null || newRecipe.getIngredientsRecipe().isEmpty()) {
+            throw new IllegalArgumentException("A recipe must at least have one ingredient");
+        }
+        if (recipes.stream().anyMatch(r -> r.getNameRecipe().equalsIgnoreCase(newRecipe.getNameRecipe().trim()))) {
+            throw new IllegalArgumentException(String.format("A recipe with the name '%s' already exist in the cookbook. Try with a different name.", newRecipe.getNameRecipe()));
+        }
+
         recipes.add(newRecipe);
         return String.format("The recipe '%s' is added to the cookbook.", newRecipe.getNameRecipe());
     }
@@ -54,7 +65,7 @@ public class CookBook {
             recipes.remove(recipeToRemove);
             return String.format("The recipe '%s' is removed from the cookbook.", recipeName);
         } else {
-            return String.format("The recipe '%s' does not exist in the cookbook.", recipeName);
+            throw new IllegalArgumentException(String.format("The recipe '%s' does not exist in the cookbook.", recipeName));
         }
     }
 
@@ -66,7 +77,7 @@ public class CookBook {
                 .orElse(null);
 
         if (recipe == null) {
-            return "Recipe not found in cookbook"; // Avslutter hvis oppskriften ikke finnes
+            return "Recipe not found in the cookbook \n"; // Avslutter hvis oppskriften ikke finnes
         }
 
         StringBuilder result = new StringBuilder();

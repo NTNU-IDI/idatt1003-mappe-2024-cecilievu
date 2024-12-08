@@ -17,6 +17,22 @@ public class Ingredient {
      * Constructor that initializes an ingredient with the give attributes.
      */
     public Ingredient(String nameItem, double quantityItem, String unitItem, double pricePerUnit, LocalDate bestBefore) {
+        if (nameItem == null || nameItem.isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+
+        if (quantityItem <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero");
+        }
+
+        if (unitItem == null || unitItem.isEmpty()) {
+            throw new IllegalArgumentException("Unit cannot be null or empty");
+        }
+
+        if (bestBefore == null) {
+            throw new IllegalArgumentException("Best before cannot be null");
+        }
+
         this.nameItem = nameItem;
         this.quantityItem = quantityItem;
         this.unitItem = unitItem;
@@ -52,7 +68,7 @@ public class Ingredient {
         if (quantityItem > 0) {
             this.quantityItem = quantityItem;
         } else {
-            throw new IllegalArgumentException("Quanity cannot be negative");
+            throw new IllegalArgumentException("Quantity cannot be negative");
         }
     }
 

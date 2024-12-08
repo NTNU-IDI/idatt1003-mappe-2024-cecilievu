@@ -13,7 +13,7 @@ public class FoodStorage {
     /**
      * A list of items in the fridge.
      */
-    private List<Ingredient> items;
+    private final List<Ingredient> items;
 
     /**
      * Constructor that initializes the food storage with an empty list of items.
@@ -43,7 +43,7 @@ public class FoodStorage {
      */
     public String addItem(Ingredient newItem) {
         if (newItem == null || newItem.getQuantityItem() <= 0) {
-            throw new IllegalArgumentException("Invalid item or quantity");
+            throw new IllegalArgumentException("Invalid item or quantity \n");
         }
         items.stream()
                 .filter(item -> item.getNameItem().equalsIgnoreCase(newItem.getNameItem())
@@ -54,8 +54,7 @@ public class FoodStorage {
                         item -> item.setQuantityItem(item.getQuantityItem() + newItem.getQuantityItem()), // Updates quantity
                         () -> items.add(newItem) // Add new item
                 );
-
-        return String.format("%.2f of %s has been added to the fridge!", newItem.getQuantityItem(), newItem.getNameItem());
+        return String.format("%.2f %s of %s has been added to the fridge! \n", newItem.getQuantityItem(),newItem.getUnitItem(), newItem.getNameItem());
     }
 
     /**
@@ -64,6 +63,7 @@ public class FoodStorage {
      *
      * @param name the name of the item to remove
      * @param quantity the quantity of the item to remove
+     * @throws IllegalArgumentException if the quantity is greater than total quantity of the item
      */
     public String removeItem(String name, double quantity) {
         items.sort(Comparator.comparing(Ingredient::getBestBefore));
@@ -74,7 +74,7 @@ public class FoodStorage {
                 .sum();
 
         if (totalQuantity < quantity) {
-            return String.format("Not enough %s in stock to remove %.2f. Stock in fridge: %.2f.", name, quantity, totalQuantity);
+            throw new IllegalArgumentException(String.format("Not enough %s in stock to remove %.2f. Stock in fridge: %.2f.", name, quantity, totalQuantity));
         }
 
         Iterator<Ingredient> iterator = items.iterator();

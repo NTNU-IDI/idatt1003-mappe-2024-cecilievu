@@ -3,6 +3,7 @@ package edu.ntnu.idi.idatt.views;
 import edu.ntnu.idi.idatt.models.*;
 import edu.ntnu.idi.idatt.utils.Utils;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*; //importing all utility classes
 
@@ -164,25 +165,35 @@ public class UserInterface {
      * Prompts the user to add new item to the fridge.
      */
     private void handleAddItem() {
-        String name = utils.readString("Type in name of the new item: ");
-        double quantity = utils.readDouble("Type quantity of item: ");
-        String unit = utils.readString("Type unit of measurement (e.g dL, grams or pcs): ");
-        double price = utils.readDouble("Price per unit: ");
-        LocalDate bestBefore = utils.readDate("Type in best before date (dd-MM-yyyy): ");
+        try {
+            String name = utils.readString("Type in name of the new item: ");
+            double quantity = utils.readDouble("Type quantity of item: ");
+            String unit = utils.readString("Type unit of measurement (e.g dL, grams or pcs): ");
+            double price = utils.readDouble("Price per unit: ");
+            LocalDate bestBefore = utils.readDate("Type in best before date (dd-MM-yyyy): ");
 
-        String message = foodStorage.addItem(new Ingredient(name, quantity, unit, price, bestBefore));
-        System.out.println(message);
+            String message = foodStorage.addItem(new Ingredient(name, quantity, unit, price, bestBefore));
+            System.out.println();
+            System.out.println(message);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 
     /**
      * Prompts the user to remove item from the fridge.
      */
     private void handleRemoveItem() {
-        String name = utils.readString("Type in the item you want to remove: ");
-        double quantity = utils.readDouble("Type in the quantity you want to remove: ");
+        try {
+            String name = utils.readString("Type in the item you want to remove: ");
+            double quantity = utils.readDouble("Type in the quantity you want to remove: ");
 
-        String message = foodStorage.removeItem(name, quantity);
-        System.out.println(message);
+            String message = foodStorage.removeItem(name, quantity);
+            System.out.println(message);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -289,43 +300,57 @@ public class UserInterface {
     }
 
     public void handleExpandRecipe() {
-        String nameRecipe = utils.readString("Type in recipe name: ");
-        String message = cookBook.expandRecipe(nameRecipe);
-        System.out.println();
-        System.out.println(message);
+        try {
+            String nameRecipe = utils.readString("Type in recipe name: ");
+            String message = cookBook.expandRecipe(nameRecipe);
+            System.out.println();
+            System.out.println(message);
+            System.out.println("Enjoy! :)");
+            System.out.println();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void handleAddRecipe() {
-        System.out.println("Step 1. Writing the recipe");
-        System.out.println("----------------------------");
-        String name = utils.readString("Type in name of the new recipe: ");
-        String description = utils.readString("Type in a short description of the recipe: ");
-        String instruction = utils.readString("Type in instructions for recipe: ");
-        int servings = utils.readInt("Type in the number of servings: ");
-        System.out.println("Step 2. Adding ingredients with its quantity and unit for the recipe:");
-        System.out.println("----------------------------------------------------------------------");
+        try {
+            System.out.println("Step 1. Writing the recipe");
+            System.out.println("----------------------------");
+            String name = utils.readString("Type in name of the new recipe: ");
+            String description = utils.readString("Type in a short description of the recipe: ");
+            String instruction = utils.readString("Type in instructions for recipe: ");
+            int servings = utils.readInt("Type in the number of servings: ");
+            System.out.println("Step 2. Adding ingredients with its quantity and unit for the recipe:");
+            System.out.println("----------------------------------------------------------------------");
 
-        List<Ingredient> ingredients = new ArrayList<>();
-        boolean addMoreIngredients = true;
+            List<Ingredient> ingredients = new ArrayList<>();
+            boolean addMoreIngredients = true;
 
-        while (addMoreIngredients) {
-            String ingredientName = utils.readString("Type in an ingredient: ");
-            double ingredientQuantity = utils.readDouble("Type in quantity: ");
-            String ingredientUnit = utils.readString("Type in unit (e.g dl, grams or pcs): ");
-
-            ingredients.add(new Ingredient(ingredientName, ingredientQuantity, ingredientUnit, 0.0, LocalDate.MAX));
-            addMoreIngredients = utils.readString("Do you want to add another ingredient? (yes/no): ")
-                    .equalsIgnoreCase("yes");
+            while (addMoreIngredients) {
+                String ingredientName = utils.readString("Type in an ingredient: ");
+                double ingredientQuantity = utils.readDouble("Type in quantity: ");
+                String ingredientUnit = utils.readString("Type in unit (e.g dl, grams or pcs): ");
+                ingredients.add(new Ingredient(ingredientName, ingredientQuantity, ingredientUnit, 0.0, LocalDate.MAX));
+                addMoreIngredients = utils.readString("Do you want to add another ingredient? (yes/no): ")
+                        .equalsIgnoreCase("yes");
+            }
+            Recipe recipe = new Recipe(name, description, instruction, ingredients, servings);
+            String result = cookBook.addRecipe(recipe);
+            System.out.println(result);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
         }
-        Recipe recipe = new Recipe(name, description, instruction, ingredients, servings);
-        String result = cookBook.addRecipe(recipe);
-        System.out.println(result);
+
     }
 
     public void handleRemoveRecipe() {
-        String name = utils.readString("Type in name of the recipe to remove: ");
-        String result = cookBook.removeRecipe(name);
-        System.out.println(result);
+        try {
+            String name = utils.readString("Type in name of the recipe to remove: ");
+            String result = cookBook.removeRecipe(name);
+            System.out.println(result);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void handleCheckRecipe() {
