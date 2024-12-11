@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This class represents the "CookBook" part of the application that manages recipes. It allows the
- * user among other things such as store, add or expand a recipe.
+ * Represents the "CookBook" part of the application that manages recipes. It allows users to store,
+ * add, remove or expand a recipe.
  */
 public class CookBook {
 
@@ -24,8 +24,7 @@ public class CookBook {
   }
 
   /**
-   * Returns a list of all recipes in the cookbook. This method creates a copy of the recipe list to
-   * avoid external changes from affecting the original list in the cookbook.
+   * Returns a copy of all the recipes in the cookbook.
    *
    * @return a copy of the list of recipes in the cookbook.
    */
@@ -35,47 +34,38 @@ public class CookBook {
 
   /**
    * Expands and displays a specific recipe with its details which includes its instructions and
-   * ingredients. This method searches for the specific recipe in the cookbook by using its name
-   * (case-insensitive).
+   * ingredients.
    *
    * @param recipeName the name of the recipe to expand.
-   * @return a formatted string with full details of the recipe, including name, description,
-   * instruction, ingredients and servings.
+   * @return a formatted string with full details of the recipe.
    * @throws IllegalArgumentException if the recipe is not found in the cookbook.
    */
   public String expandRecipe(String recipeName) {
-    return recipes.stream()
-        .filter(recipe -> recipe.getNameRecipe().equalsIgnoreCase(recipeName))
-        .findFirst()
-        .map(recipe -> {
-          // StringBuilder, endrer innhold uten å opprette nye objekter (mutable)
-          StringBuilder details = new StringBuilder();
-          details.append("Recipe name: ").append(recipe.getNameRecipe()).append("\n");
-          details.append("Recipe description: ").append(recipe.getDescriptionRecipe()).append("\n");
-          details.append("Recipe instructions: ").append(recipe.getInstructionsRecipe())
-              .append("\n");
-          details.append("Ingredients: \n");
-          recipe.getIngredientsRecipe()
-              .forEach(ingredient -> details.append(String.format("- %s: %.2f %s",
-                  ingredient.getNameItem(), ingredient.getQuantityItem(),
-                  ingredient.getUnitItem())));
-          details.append("Servings: ").append(recipe.getServingsRecipe()).append("\n");
-          return details.toString();
-        })
-        .orElseThrow(() -> new IllegalArgumentException("Recipe not found in cookbook"));
+    Recipe recipe = findRecipeByName(recipeName);
+    // StringBuilder, endrer innhold uten å opprette nye objekter (mutable)
+    StringBuilder details = new StringBuilder();
+    details.append("Recipe name: ").append(recipe.getNameRecipe()).append("\n")
+        .append("Recipe description: ").append(recipe.getDescriptionRecipe()).append("\n")
+        .append("Recipe instructions: ").append(recipe.getInstructionsRecipe()).append("\n")
+        .append("Ingredients: \n");
+
+    recipe.getIngredientsRecipe().forEach(ingredient ->
+        details.append(String.format("- %s: %.2f %s",
+            ingredient.getNameItem(),
+            ingredient.getQuantityItem(),
+            ingredient.getUnitItem()))
+    );
+    details.append("Servings: ").append(recipe.getServingsRecipe()).append("\n");
+    return details.toString();
   }
 
   /**
-   * Adds a new recipe to the cookbook. This method checks if the recipe is valid before it's added
-   * to the cookbook by verifying if the recipe name is a duplicate of an existing recipe name, if
-   * the recipe has an empty name, or an empty list of ingredients. If this happens, an exception
-   * will be thrown.
+   * Adds a new recipe to the cookbook. if the recipe is null or has an empty name, an empty list of
+   * ingredients, or if the name is a duplicate, an exception will be thrown.
    *
    * @param newRecipe the new recipe to be added to the cookbook.
-   * @return a message indicating that the recipe was added successfully.
-   * @throws IllegalArgumentException if the recipe is null, if its name is null or empty, if the
-   *                                  recipe has no ingredients, or if the name is a duplicate of an
-   *                                  existing recipe in the cookbook.
+   * @return a message confirming that the recipe was added successfully.
+   * @throws IllegalArgumentException if the recipe name is invalid or is a duplicate.
    */
   public String addRecipe(Recipe newRecipe) {
     // Sjekke at oppskriften ikke er null (NullPointerException)
@@ -100,65 +90,32 @@ public class CookBook {
   }
 
   /**
-   * Removes a specific recipe from the cookbook. This method searches for the recipe by using its
-   * name (case-insensitive). If the recipe is found, it will be removed from the internal list. If
-   * the recipe is not found, an exception will be thrown.
+   * Removes a specific recipe from the cookbook.
    *
-   * @param recipeName the recipe to be removed.
-   * @return a message that indicate that the recipe is removed successfully.
+   * @param recipeName the name of recipe to be removed.
+   * @return a message confirming that the recipe is removed successfully.
    * @throws IllegalArgumentException if the recipe does not exist in the cookbook.
    */
   public String removeRecipe(String recipeName) {
-    return recipes.stream()
-        .filter(recipe -> recipe.getNameRecipe().equalsIgnoreCase(recipeName))
-        .findFirst()
-        .map(recipeToRemove -> {
-          recipes.remove(recipeToRemove);
-          return String.format("The recipe '%s' is removed from the cookbook.", recipeName);
-        })
-        .orElseThrow(() -> new IllegalArgumentException(
-            (String.format("The recipe '%s' does not exist in the cookbook.", recipeName))));
+    Recipe recipeToRemove = findRecipeByName(recipeName);
+    recipes.remove(recipeToRemove);
+    return String.format("The recipe '%s' is removed from the cookbook.", recipeName);
   }
 
   /**
-   * Checking if a recipe kan be made by items/ingredients in the "fridge". This method searches for
-   * a recipe by name (case-insensitive) and then iterating through the available ingredients in
-   * store. If any ingredients are missing, it will return a message with the missing ingredient and
-   * quantity. If the recipe does not exist, an exception will be thrown.
+   * Checking if a recipe kan be made by items/ingredients in the "fridge".
    *
    * @param recipeName  the name of the recipe to check
    * @param foodStorage the "fridge" to check for available ingredients
-   * @return a message that indicates whether the recipe can be made, or which ingredients are
-   * missing
+   * @return a message indicating whether the recipe can be made, or which ingredients are missing.
    * @throws IllegalArgumentException if the recipe does not exist in the cookbook.
    */
   public String canMakeRecipe(String recipeName, FoodStorage foodStorage) {
-    // Finner oppskrift basert på navn
-    Recipe recipe = recipes.stream()
-        .filter(r -> r.getNameRecipe().equalsIgnoreCase(recipeName))
-        .findFirst()
-        .orElseThrow(() -> new IllegalArgumentException(
-            String.format("The recipe '%s' does not exist in the cookbook.", recipeName)));
-
+    Recipe recipe = findRecipeByName(recipeName);
     StringBuilder result = new StringBuilder();
-    boolean canMake = true;
+    boolean canMake = recipe.getIngredientsRecipe().stream()
+        .allMatch(ingredient -> isIngredientAvailable(ingredient, foodStorage, result));
 
-    // Sjekker om alle ingredienser er i kjøleskapet
-    for (Ingredient ingredient : recipe.getIngredientsRecipe()) {
-      Ingredient available = foodStorage.getItems().stream()
-          .filter(item -> item.getNameItem().equalsIgnoreCase(ingredient.getNameItem()))
-          .findFirst()
-          .orElse(null);
-
-      // Hvis ingrediensene ikke finnes eller det er for lite av den
-      if (available == null || available.getQuantityItem() < ingredient.getQuantityItem()) {
-        double missingAmount =
-            ingredient.getQuantityItem() - (available == null ? 0 : available.getQuantityItem());
-        result.append(String.format("Missing: %s (you need %.2f %s)",
-            ingredient.getNameItem(), missingAmount, ingredient.getUnitItem()));
-        canMake = false;
-      }
-    }
     if (canMake) {
       return "You have all the ingredients to make " + recipeName + "!\n";
     }
@@ -167,27 +124,78 @@ public class CookBook {
   }
 
   /**
-   * Returns a list of suggested recipes based by items/ingredients in the "fridge". This method
-   * iterates through all the recipes in the cookbook and then checks if all the needed ingredients
-   * and quantities are in store. If a recipe can be made, it's added to the list of suggestions.
+   * Returns a list of suggested recipes based by items/ingredients in the "fridge".
    *
-   * @param foodStorage the "fridge" to check for available ingredients.
-   * @return a list of recipe names that can be made with items in the fridge.
+   * @param foodStorage the "fridge" to check for available ingredients
+   * @return a list of recipe names that can be made
    */
   public List<String> suggestRecipe(FoodStorage foodStorage) {
     return recipes.stream()
-        .filter(recipe -> recipe.getIngredientsRecipe()
-            .stream()
-            .allMatch(ingredient -> {
-              Ingredient available = foodStorage.getItems().stream()
-                  .filter(item -> item.getNameItem().equalsIgnoreCase(ingredient.getNameItem()))
-                  .findFirst()
-                  .orElse(null);
-              return available != null
-                  && available.getQuantityItem() >= ingredient.getQuantityItem();
-            })
-        )
+        .filter(recipe -> canMake(recipe, foodStorage))
         .map(Recipe::getNameRecipe)
         .collect(Collectors.toList());
+  }
+
+  // Ekstra metoder som kan bli gjenbrukt for å finne en oppskrift etter navn eller sjekke om det er
+  // nok varer i kjøleskap for å lage en oppskrift.
+  // Hjelp fra ChatGPT
+
+  /**
+   * Finds a recipe by name (case-insensitive) in the cookbook.
+   *
+   * @param recipeName the name of the recipe to find
+   * @return the matching recipe
+   * @throws IllegalArgumentException if the recipe does not exist in the cookbook
+   */
+  private Recipe findRecipeByName(String recipeName) {
+    return recipes.stream()
+        .filter(recipe -> recipe.getNameRecipe().equalsIgnoreCase(recipeName))
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException(
+            (String.format("The recipe '%s' does not exist in the cookbook.", recipeName))
+        ));
+  }
+
+  /**
+   * Checking if a specific ingredient is available in the fridge.
+   *
+   * @param ingredient  the ingredient to check
+   * @param foodStorage the fridge to check for the ingredient
+   * @param result      the result to update if the ingredient is not available
+   * @return true if the ingredient is available, false otherwise
+   */
+  private boolean isIngredientAvailable(Ingredient ingredient, FoodStorage foodStorage,
+      StringBuilder result) {
+    // Sjekker om alle ingredienser er i kjøleskapet
+    Ingredient available = foodStorage.getItems().stream()
+        .filter(item -> item.getNameItem().equalsIgnoreCase(ingredient.getNameItem()))
+        .findFirst()
+        .orElse(null);
+
+    // Hvis ingrediensene ikke finnes eller det er for lite av den
+    if (available == null || available.getQuantityItem() < ingredient.getQuantityItem()) {
+      double missingAmount =
+          ingredient.getQuantityItem() - (available == null ? 0 : available.getQuantityItem());
+      result.append(String.format("Missing: %s (you need %.2f %s)",
+          ingredient.getNameItem(), missingAmount, ingredient.getUnitItem()));
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Checks if a recipe can be made with the ingredients in the fridge.
+   *
+   * @param recipe      the recipe to check
+   * @param foodStorage the fridge to check for available ingredients
+   * @return true if the recipe can be made, false otherwise
+   */
+  private boolean canMake(Recipe recipe, FoodStorage foodStorage) {
+    return recipe.getIngredientsRecipe().stream()
+        .allMatch(ingredient ->
+            foodStorage.getItems().stream()
+                .anyMatch(item -> item.getNameItem().equalsIgnoreCase(ingredient.getNameItem())
+                    && item.getQuantityItem() >= ingredient.getQuantityItem())
+        );
   }
 }

@@ -7,8 +7,8 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 /**
- * This class handles the users input with prompts. This class reads integer, double, string and
- * date inputs from the user.
+ * Utility class that handles users input and displays formatted menu and tables. It provides method
+ * for reading integers, doubles, strings and date.
  */
 public class Utils {
 
@@ -16,8 +16,8 @@ public class Utils {
   private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
   /**
-   * Reads a non-empty "string" input from user. Continues to prompt until a valid input is
-   * entered.
+   * Reads a non-empty "string" input from user. It only allows alphabetical characters, including
+   * "Æ, Ø, Å" and spaces
    *
    * @param prompt the message displayed to the user to guide input.
    * @return the user's input as a non-empty string.
@@ -34,7 +34,7 @@ public class Utils {
   }
 
   /**
-   * Reads an integer input from user. Continues to prompt until valid input is entered.
+   * Reads an integer input from user.
    *
    * @param prompt the message displayed to the user to guide input.
    * @return the user's input as an integer.
@@ -51,8 +51,7 @@ public class Utils {
   }
 
   /**
-   * Reads a positive "double" value from user. Makes sure that the value is greater than zero.
-   * Continues to prompt until valid input is entered.
+   * Reads a positive double value from user. The value must be greater than zero.
    *
    * @param prompt the message displayed to the user to guide input.
    * @return the user's input as a positive double.
@@ -73,8 +72,7 @@ public class Utils {
   }
 
   /**
-   * Reads a date input from user in the format "dd-MM-yyyy". Continues to prompt until valid input
-   * is entered.
+   * Reads a date input from user in the format "dd-MM-yyyy".
    *
    * @param prompt the message displayed to the user to guide input.
    * @return the user's input as a LocalDate.

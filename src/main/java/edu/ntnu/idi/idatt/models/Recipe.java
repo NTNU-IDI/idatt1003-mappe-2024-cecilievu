@@ -3,12 +3,11 @@ package edu.ntnu.idi.idatt.models;
 import java.util.List;
 
 /**
- * This class represent attributes that are included in a recipe such as name, description,
- * instructions, list of needed ingredients and servings.
+ * Represent attributes that are included in a recipe such as name, description, instructions, list
+ * of needed ingredients and servings.
  */
 public class Recipe {
 
-  // Attributes
   private final String nameRecipe;
   private final String descriptionRecipe;
   private final String instructionsRecipe;
@@ -16,8 +15,13 @@ public class Recipe {
   private final int servingsRecipe;
 
   /**
-   * Constructor that initializes a recipe with the given attributes.
+   * Constructor that initializes a new recipe with the given attributes.
    *
+   * @param nameRecipe         the name of the recipe
+   * @param descriptionRecipe  a brief description of the recipe
+   * @param instructionsRecipe a short instruction for the recipe
+   * @param ingredients        a list of ingredients needed for the recipe
+   * @param servingsRecipe     the number of servings the recipe makes
    * @throws IllegalArgumentException if the recipe name/description/instruction/list of ingredients
    *                                  is null or empty, or the servings is negative.
    */
@@ -36,26 +40,27 @@ public class Recipe {
       throw new IllegalArgumentException("Recipe ingredients cannot be null or empty");
     }
     if (servingsRecipe <= 0) {
-      throw new IllegalArgumentException("Servings recipe must be greater than zero");
+      throw new IllegalArgumentException("Servings must be greater than zero");
     }
+
     this.nameRecipe = nameRecipe;
     this.instructionsRecipe = instructionsRecipe;
     this.descriptionRecipe = descriptionRecipe;
-    this.ingredientsRecipe = ingredients;
+    this.ingredientsRecipe = List.copyOf(ingredients); // Sørger for at listen er immutable
     this.servingsRecipe = servingsRecipe;
   }
 
   /**
-   * Gets the name of the recipe.
+   * Returns the name of the recipe.
    *
-   * @return the recipe name.
+   * @return the recipe name
    */
   public String getNameRecipe() {
     return nameRecipe;
   }
 
   /**
-   * Gets the description of the recipe.
+   * Returns the description of the recipe.
    *
    * @return the recipe description
    */
@@ -64,27 +69,27 @@ public class Recipe {
   }
 
   /**
-   * Gets the instruction for the recipe.
+   * Returns the instruction for the recipe.
    *
-   * @return the recipe instructions.
+   * @return the recipe instructions
    */
   public String getInstructionsRecipe() {
     return instructionsRecipe;
   }
 
   /**
-   * Gets the list of ingredients for the recipe.
+   * Returns a immutable list of ingredients for the recipe.
    *
-   * @return the list of ingredients for the recipe.
+   * @return the list of ingredients for the recipe
    */
   public List<Ingredient> getIngredientsRecipe() {
     return ingredientsRecipe;
   }
 
   /**
-   * Gets how many servings for the recipe.
+   * Returns the number of servings the recipe makes.
    *
-   * @return how many servings for the recipe.
+   * @return the number of servings
    */
   public int getServingsRecipe() {
     return servingsRecipe;

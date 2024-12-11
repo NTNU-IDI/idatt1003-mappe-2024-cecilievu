@@ -3,8 +3,8 @@ package edu.ntnu.idi.idatt.models;
 import java.time.LocalDate;
 
 /**
- * This class represents an ingredient with attributes such as name, quantity, unit, price and
- * best-before date.
+ * Represents an ingredient with attributes such as name, quantity, unit, price and best-before
+ * date.
  */
 public class Ingredient {
 
@@ -16,8 +16,13 @@ public class Ingredient {
   private final LocalDate bestBefore;
 
   /**
-   * Constructor that initializes an ingredient with the give attributes.
+   * Constructor that initializes an ingredient/item with the give attributes.
    *
+   * @param nameItem     the name of the item
+   * @param quantityItem the quantity of the item
+   * @param unitItem     the unit of the item
+   * @param pricePerUnit the price per unit of the item
+   * @param bestBefore   the expiry date of the item
    * @throws IllegalArgumentException if the name is null or empty, if the quantity is negative, if
    *                                  the unit is null or empty or if the date is null.
    */
@@ -47,7 +52,7 @@ public class Ingredient {
   }
 
   /**
-   * Gets the name of the item.
+   * Returns the name of the item.
    *
    * @return the name of the item
    */
@@ -56,7 +61,7 @@ public class Ingredient {
   }
 
   /**
-   * Gets the quantity for the item.
+   * Returns the quantity for the item.
    *
    * @return the quantity of the item
    */
@@ -65,9 +70,9 @@ public class Ingredient {
   }
 
   /**
-   * Sets the quantity of the item. If the quantity is negative, an exception will be thrown.
+   * Updates the quantity of the item. If the quantity is negative, an exception will be thrown.
    *
-   * @param quantityItem the new quantity of the item
+   * @param quantityItem the new quantity of the ingredient
    * @throws IllegalArgumentException if the quantity is negative
    */
   public void setQuantityItem(double quantityItem) {
@@ -78,7 +83,7 @@ public class Ingredient {
   }
 
   /**
-   * Gets the unit of the item.
+   * Returns the unit of the item.
    *
    * @return the unit of the item
    */
@@ -87,7 +92,7 @@ public class Ingredient {
   }
 
   /**
-   * Gets the price for the item.
+   * Returns the price for the item.
    *
    * @return the price per unit of the item
    */
@@ -96,9 +101,9 @@ public class Ingredient {
   }
 
   /**
-   * Gets the best-before date of the item.
+   * Returns the best-before date of the item.
    *
-   * @return the best-before date
+   * @return the best-before date of the item
    */
   public LocalDate getBestBefore() {
     return bestBefore;
