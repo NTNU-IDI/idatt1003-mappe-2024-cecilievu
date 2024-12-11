@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class TestRecipe {
+public class TestRecipe {
 
   Recipe recipe;
 
@@ -105,7 +105,7 @@ class TestRecipe {
   }
 
   @Nested
-  @DisplayName("Positive tests for recipe")
+  @DisplayName("Positive tests for Recipe with valid input")
   public class methodsDoesNotThrowExceptions {
 
     @Test
@@ -122,14 +122,15 @@ class TestRecipe {
       assertEquals(ingredients, recipe.getIngredientsRecipe());
       assertEquals(2, recipe.getIngredientsRecipe().size());
     }
-  }
 
-  @Test
-  @DisplayName("Constructor creates a recipe with minimum valid servings (1)")
-  public void testConstructor_createsRecipeWithMinimumValidServings() {
-    List<Ingredient> ingredients = List.of(new Ingredient("Egg", 2, "pcs", 0.0, LocalDate.MAX));
-    Recipe recipe = new Recipe("Pannekake", "Breakfast dish", "Pour batter in pan", ingredients, 1);
-    assertEquals(1, recipe.getServingsRecipe());
+    @Test
+    @DisplayName("Constructor creates a recipe with minimum valid servings (1)")
+    public void testConstructor_createsRecipeWithMinimumValidServings() {
+      List<Ingredient> ingredients = List.of(new Ingredient("Egg", 2, "pcs", 0.0, LocalDate.MAX));
+      Recipe recipe = new Recipe("Pannekake", "Breakfast dish", "Pour batter in pan", ingredients,
+          1);
+      assertEquals(1, recipe.getServingsRecipe());
+    }
   }
 }
 

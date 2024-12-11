@@ -29,7 +29,7 @@ public class Ingredient {
   public Ingredient(String nameItem, double quantityItem, String unitItem, double pricePerUnit,
       LocalDate bestBefore) {
     if (nameItem == null || nameItem.isBlank()) {
-      throw new IllegalArgumentException("Name cannot be null or empty");
+      throw new IllegalArgumentException("Name cannot be null or blank");
     }
 
     if (quantityItem <= 0) {
@@ -37,11 +37,11 @@ public class Ingredient {
     }
 
     if (unitItem == null || unitItem.isBlank()) {
-      throw new IllegalArgumentException("Unit cannot be null or empty");
+      throw new IllegalArgumentException("Unit cannot be null or blank");
     }
 
     if (bestBefore == null) {
-      throw new IllegalArgumentException("Best before cannot be null");
+      throw new IllegalArgumentException("Best-before date cannot be null");
     }
 
     this.nameItem = nameItem;

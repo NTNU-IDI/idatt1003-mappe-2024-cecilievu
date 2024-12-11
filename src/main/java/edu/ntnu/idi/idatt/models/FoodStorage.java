@@ -73,7 +73,6 @@ public class FoodStorage {
    * @param quantity the quantity of the item to remove
    * @return a summary of the removing process, including details about removed items and updated
    * stock status.
-   * @throws IllegalArgumentException if the quantity is greater than total quantity of the item
    */
   public String removeItem(String name, double quantity) {
     double remainingQuantity = quantity;
