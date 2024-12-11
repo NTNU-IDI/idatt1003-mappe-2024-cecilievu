@@ -3,98 +3,104 @@ package edu.ntnu.idi.idatt.models;
 import java.time.LocalDate;
 
 /**
- * Represents an ingredient with attributes such as name, quantity, unit, price and best-before date.
+ * This class represents an ingredient with attributes such as name, quantity, unit, price and
+ * best-before date.
  */
 public class Ingredient {
-    // Attributes
-    private final String nameItem;
-    private double quantityItem;
-    private final String unitItem;
-    private final double pricePerUnit;
-    private final LocalDate bestBefore;
 
-    /**
-     * Constructor that initializes an ingredient with the give attributes.
-     */
-    public Ingredient(String nameItem, double quantityItem, String unitItem, double pricePerUnit, LocalDate bestBefore) {
-        if (nameItem == null || nameItem.isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be null or empty");
-        }
+  // Attributes
+  private final String nameItem;
+  private double quantityItem;
+  private final String unitItem;
+  private final double pricePerUnit;
+  private final LocalDate bestBefore;
 
-        if (quantityItem <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than zero");
-        }
-
-        if (unitItem == null || unitItem.isEmpty()) {
-            throw new IllegalArgumentException("Unit cannot be null or empty");
-        }
-
-        if (bestBefore == null) {
-            throw new IllegalArgumentException("Best before cannot be null");
-        }
-
-        this.nameItem = nameItem;
-        this.quantityItem = quantityItem;
-        this.unitItem = unitItem;
-        this.pricePerUnit = pricePerUnit;
-        this.bestBefore = bestBefore;
+  /**
+   * Constructor that initializes an ingredient with the give attributes.
+   *
+   * @throws IllegalArgumentException if the name is null or empty, if the quantity is negative, if
+   *                                  the unit is null or empty or if the date is null.
+   */
+  public Ingredient(String nameItem, double quantityItem, String unitItem, double pricePerUnit,
+      LocalDate bestBefore) {
+    if (nameItem == null || nameItem.isEmpty()) {
+      throw new IllegalArgumentException("Name cannot be null or empty");
     }
 
-    /**
-     * Gets the name of the item.
-     *
-     * @return the name of the item
-     */
-    public String getNameItem() {
-        return nameItem;
+    if (quantityItem <= 0) {
+      throw new IllegalArgumentException("Quantity must be greater than zero");
     }
 
-    /**
-     * Gets the quantity for the item.
-     *
-     * @return the quantity of the item
-     */
-    public double getQuantityItem() {
-        return quantityItem;
+    if (unitItem == null || unitItem.isEmpty()) {
+      throw new IllegalArgumentException("Unit cannot be null or empty");
     }
 
-    /**
-     * Sets the quantity of the item.
-     *
-     * @param quantityItem the new quantity of the item
-     * @throws IllegalArgumentException if the quantity is negative
-     */
-    public void setQuantityItem(double quantityItem) {
-        if (quantityItem < 0) {
-            throw new IllegalArgumentException("Quantity cannot be negative");
-        }
-        this.quantityItem = quantityItem;
+    if (bestBefore == null) {
+      throw new IllegalArgumentException("Best before cannot be null");
     }
 
-    /**
-     * Gets the unit of the item.
-     *
-     * @return the unit of the item
-     */
-    public String getUnitItem() {
-        return unitItem;
-    }
+    this.nameItem = nameItem;
+    this.quantityItem = quantityItem;
+    this.unitItem = unitItem;
+    this.pricePerUnit = pricePerUnit;
+    this.bestBefore = bestBefore;
+  }
 
-    /**
-     * Gets the price for the item.
-     *
-     * @return the price per unit of the item
-     */
-    public double getPricePerUnit() {
-        return pricePerUnit;
-    }
+  /**
+   * Gets the name of the item.
+   *
+   * @return the name of the item
+   */
+  public String getNameItem() {
+    return nameItem;
+  }
 
-    /**
-     * Gets the best-before date of the item.
-     *
-     * @return the best-before date
-     */
-    public LocalDate getBestBefore() {
-        return bestBefore;
+  /**
+   * Gets the quantity for the item.
+   *
+   * @return the quantity of the item
+   */
+  public double getQuantityItem() {
+    return quantityItem;
+  }
+
+  /**
+   * Sets the quantity of the item. If the quantity is negative, an exception will be thrown.
+   *
+   * @param quantityItem the new quantity of the item
+   * @throws IllegalArgumentException if the quantity is negative
+   */
+  public void setQuantityItem(double quantityItem) {
+    if (quantityItem < 0) {
+      throw new IllegalArgumentException("Quantity cannot be negative");
     }
+    this.quantityItem = quantityItem;
+  }
+
+  /**
+   * Gets the unit of the item.
+   *
+   * @return the unit of the item
+   */
+  public String getUnitItem() {
+    return unitItem;
+  }
+
+  /**
+   * Gets the price for the item.
+   *
+   * @return the price per unit of the item
+   */
+  public double getPricePerUnit() {
+    return pricePerUnit;
+  }
+
+  /**
+   * Gets the best-before date of the item.
+   *
+   * @return the best-before date
+   */
+  public LocalDate getBestBefore() {
+    return bestBefore;
+  }
 }
