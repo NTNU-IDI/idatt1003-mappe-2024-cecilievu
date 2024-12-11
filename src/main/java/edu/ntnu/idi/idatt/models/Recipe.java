@@ -27,14 +27,14 @@ public class Recipe {
    */
   public Recipe(String nameRecipe, String descriptionRecipe, String instructionsRecipe,
       List<Ingredient> ingredients, int servingsRecipe) {
-    if (nameRecipe == null || nameRecipe.isEmpty()) {
-      throw new IllegalArgumentException("Recipe name cannot be null or empty");
+    if (nameRecipe == null || nameRecipe.isBlank()) {
+      throw new IllegalArgumentException("Recipe name cannot be null or blank");
     }
-    if (descriptionRecipe == null || descriptionRecipe.isEmpty()) {
-      throw new IllegalArgumentException("Recipe description cannot be null or empty");
+    if (descriptionRecipe == null || descriptionRecipe.isBlank()) {
+      throw new IllegalArgumentException("Recipe description cannot be null or blank");
     }
-    if (instructionsRecipe == null || instructionsRecipe.isEmpty()) {
-      throw new IllegalArgumentException("Recipe instructions cannot be null or empty");
+    if (instructionsRecipe == null || instructionsRecipe.isBlank()) {
+      throw new IllegalArgumentException("Recipe instructions cannot be null or blank");
     }
     if (ingredients == null || ingredients.isEmpty()) {
       throw new IllegalArgumentException("Recipe ingredients cannot be null or empty");

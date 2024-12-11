@@ -28,7 +28,7 @@ public class Ingredient {
    */
   public Ingredient(String nameItem, double quantityItem, String unitItem, double pricePerUnit,
       LocalDate bestBefore) {
-    if (nameItem == null || nameItem.isEmpty()) {
+    if (nameItem == null || nameItem.isBlank()) {
       throw new IllegalArgumentException("Name cannot be null or empty");
     }
 
@@ -36,7 +36,7 @@ public class Ingredient {
       throw new IllegalArgumentException("Quantity must be greater than zero");
     }
 
-    if (unitItem == null || unitItem.isEmpty()) {
+    if (unitItem == null || unitItem.isBlank()) {
       throw new IllegalArgumentException("Unit cannot be null or empty");
     }
 
