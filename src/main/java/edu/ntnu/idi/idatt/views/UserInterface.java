@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * The UserInterFace class handles the interaction with the user for the "Fridge and CookBook"
- * application. It provides a menu for the user to manage the fridge or cookbook such as adding,
- * removing, searching or displaying items/recipes.
+ * Represents the interaction with the user for the "Fridge and CookBook" application. It provides a
+ * menu for users to manage the fridge or cookbook, allowing for actions like adding, removing,
+ * searching or displaying items/recipes.
  */
 public class UserInterface {
 
@@ -27,7 +27,7 @@ public class UserInterface {
   private final Utils utils = new Utils();
 
   /**
-   * Enum menu, representing options for the user from 1-14.
+   * Enum representing menu options for the user from 1-14.
    */
   public enum MenuOption {
     SHOW_ITEMS(1, "Show items in the fridge"),
@@ -43,7 +43,7 @@ public class UserInterface {
     REMOVE_RECIPE(11, "Remove recipe"),
     CHECK_RECIPE(12, "Check if a recipe can be made from items in fridge"),
     SUGGEST_RECIPE(13, "Suggest recipes from items in fridge"),
-    EXIT(14, "End program");
+    EXIT_OPTION(14, "End program");
 
     private final int value;
     private final String description;
@@ -64,7 +64,7 @@ public class UserInterface {
     /**
      * Finds a menu option based on its value.
      *
-     * @param value the "int" value of the menu options
+     * @param value the integer value of the menu option
      * @return an Optional, containing the chosen value from MenuOption
      */
     public static Optional<MenuOption> fromValue(int value) {
@@ -73,13 +73,10 @@ public class UserInterface {
   }
 
   /**
-   * Initialize the food storage/fridge with predefined items.
+   * Initialize the food storage/fridge with predefined items and recipes.
    */
   public void init() {
-    // Forhåndsdefinerte varer
     TestData.getPreDefinedItems().forEach(foodStorage::addItem);
-
-    // Forhåndsdefinterte oppskrifter
     TestData.getPreDefineRecipes().forEach(cookBook::addRecipe);
   }
 
@@ -96,7 +93,7 @@ public class UserInterface {
 
       // Ved avslutning (valg nummer 14), brytes løkken ut.
       if (menuOption.isPresent()) {
-        if (menuOption.get() == MenuOption.EXIT) {
+        if (menuOption.get() == MenuOption.EXIT_OPTION) {
           System.out.println();
           System.out.println(
               "Thank you for using the Fridge and Cookbook Manager. See you next time! :)");
@@ -135,7 +132,7 @@ public class UserInterface {
   }
 
   /**
-   * Displays items in the fridge, sorted by name and best-before date.
+   * Displays items in the fridge, sorted by name and expiration date.
    */
   private void handleShowItem() {
     List<Ingredient> items = foodStorage.getItems();
@@ -147,19 +144,16 @@ public class UserInterface {
       items.stream()
           .sorted(Comparator.comparing((Ingredient item) -> item.getNameItem().toLowerCase())
               .thenComparing(Ingredient::getBestBefore))
-          .forEach(item -> {
-            String formatted = String.format("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
-                item.getNameItem(), item.getQuantityItem(), item.getUnitItem(),
-                item.getPricePerUnit(), item.getBestBefore()
-            );
-            System.out.println(formatted);
-          });
-      System.out.println();
+          .forEach(item -> System.out.printf("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
+              item.getNameItem(), item.getQuantityItem(), item.getUnitItem(),
+              item.getPricePerUnit(), item.getBestBefore()));
     }
+    System.out.println();
   }
 
+
   /**
-   * Prompts the user to add new item to the fridge.
+   * Adds an item to the fridge based on user input.
    */
   private void handleAddItem() {
     try {
@@ -175,17 +169,15 @@ public class UserInterface {
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
     }
-
   }
 
   /**
-   * Prompts the user to remove item from the fridge.
+   * Removes an item from the fridge based on item name and quantity.
    */
   private void handleRemoveItem() {
     try {
       String name = utils.readString("Type in the item you want to remove: ");
       double quantity = utils.readDouble("Type in the quantity you want to remove: ");
-
       String message = foodStorage.removeItem(name, quantity);
       System.out.println();
       System.out.println(message);
@@ -195,13 +187,11 @@ public class UserInterface {
   }
 
   /**
-   * Prompts the user to search for a specific item by name. Displays the matching item sorted by
-   * name and date.
+   * Searches for an item in the fridge. Displays the matching item sorted by name and date.
    */
   private void handleSearchItem() {
     String name = utils.readString("Type in item name: ");
     List<Ingredient> matchingItems = foodStorage.searchItem(name);
-
     if (matchingItems.isEmpty()) {
       System.out.println("No matching item with the name: " + name);
     } else {
@@ -209,37 +199,29 @@ public class UserInterface {
       utils.printListItem();
       matchingItems.stream()
           .sorted(Comparator.comparing(Ingredient::getBestBefore))
-          .forEach(item -> {
-            String formatted = String.format("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
-                item.getNameItem(), item.getQuantityItem(), item.getUnitItem(),
-                item.getPricePerUnit(), item.getBestBefore()
-            );
-            System.out.println(formatted);
-          });
-      System.out.println();
+          .forEach(item -> System.out.printf("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
+              item.getNameItem(), item.getQuantityItem(), item.getUnitItem(),
+              item.getPricePerUnit(), item.getBestBefore()));
     }
+    System.out.println();
   }
 
   /**
-   * Prompts the user to search items by best-before date.
+   * Displays items by expiration date based on users input.
    */
   private void handleShowItemByDate() {
     LocalDate date = utils.readDate("Enter a date (dd-MM-yyyy): ");
     List<Ingredient> itemByDate = foodStorage.getItemsBeforeDate(date);
-
     if (itemByDate.isEmpty()) {
       System.out.println("No item found with the best-before-date " + date);
     } else {
       System.out.println("Items with the best-before-date " + date + ":");
       utils.printListItem();
-      itemByDate.forEach(item -> {
-        String formatted = String.format("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
-            item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(),
-            item.getBestBefore());
-        System.out.println(formatted);
-      });
-      System.out.println();
+      itemByDate.forEach(item -> System.out.printf("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
+          item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(),
+          item.getBestBefore()));
     }
+    System.out.println();
   }
 
   /**
@@ -248,7 +230,6 @@ public class UserInterface {
    */
   private void handleShowExpiredItems() {
     List<Ingredient> expiredItems = foodStorage.getExpiredItems();
-
     if (expiredItems.isEmpty()) {
       System.out.println();
       System.out.println("No items have expired!\n");
@@ -256,26 +237,24 @@ public class UserInterface {
       System.out.println();
       System.out.println("Expired items:");
       utils.printListItem();
-      expiredItems.forEach(item -> {
-        String formatted = String.format("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
-            item.getNameItem(), item.getQuantityItem(), item.getUnitItem(), item.getPricePerUnit(),
-            item.getBestBefore());
-        System.out.println(formatted);
-      });
+      expiredItems.forEach(item ->
+          System.out.printf("%-12s | %7.2f   %-6s | %6.2f  kr     | %4s",
+              item.getNameItem(), item.getQuantityItem(), item.getUnitItem(),
+              item.getPricePerUnit(),
+              item.getBestBefore()));
 
       double totalValue = expiredItems.stream()
           .mapToDouble(item -> item.getQuantityItem() * item.getPricePerUnit())
           .sum();
       System.out.println("Total value of expired items: " + totalValue + " kr");
-      System.out.println(
-          "Before throwing out, LOOK - SMELL - TASTE! Trust your senses, reduce foodwaste! :)");
+      System.out.println("Before throwing out, LOOK - SMELL - TASTE! "
+          + "Trust your senses, reduce food waste! :)");
       System.out.println();
     }
   }
 
   /**
-   * Displays total value of all the items in the fridge. Each item's value is calculated as
-   * quantity * pricer per unit.
+   * Displays total value of all the items in the fridge.
    */
   private void handleShowTotalValue() {
     double totalValue = foodStorage.calculateTotalValue();
@@ -285,25 +264,27 @@ public class UserInterface {
   }
 
   // COOKBOOK
+
+  /**
+   * Displays all the recipes in the cookbook.
+   */
   public void handleShowRecipe() {
     List<Recipe> recipes = cookBook.getRecipes();
     if (recipes.isEmpty()) {
       System.out.println("There's no recipes in the cookbook.");
     } else {
       utils.printListRecipes();
-
       recipes.stream()
           .sorted(Comparator.comparing(recipe -> recipe.getNameRecipe().toLowerCase()))
-          .forEach(recipe -> {
-            String formatted = String.format("%-18s | %-50s | %d",
-                recipe.getNameRecipe(), recipe.getDescriptionRecipe(), recipe.getServingsRecipe()
-            );
-            System.out.println(formatted);
-          });
-      System.out.println();
+          .forEach(recipe -> System.out.printf("%-18s | %-50s | %d",
+              recipe.getNameRecipe(), recipe.getDescriptionRecipe(), recipe.getServingsRecipe()));
     }
+    System.out.println();
   }
 
+  /**
+   * Expands a specified recipe by recipe name.
+   */
   public void handleExpandRecipe() {
     try {
       String nameRecipe = utils.readString("Type in recipe name: ");
@@ -317,6 +298,9 @@ public class UserInterface {
     }
   }
 
+  /**
+   * Adds a new recipe to the cookbook by users input.
+   */
   public void handleAddRecipe() {
     try {
       System.out.println();
@@ -336,10 +320,10 @@ public class UserInterface {
         String ingredientName = utils.readString("Type in an ingredient: ");
         double ingredientQuantity = utils.readDouble("Type in quantity: ");
         String ingredientUnit = utils.readString("Type in unit (e.g dl, grams or pcs): ");
-        ingredients.add(
-            new Ingredient(ingredientName, ingredientQuantity, ingredientUnit, 0.0, LocalDate.MAX));
-        addMoreIngredients = utils.readString("Do you want to add another ingredient? (yes/no): ")
-            .equalsIgnoreCase("yes");
+        ingredients.add(new Ingredient(ingredientName, ingredientQuantity, ingredientUnit,
+            0.0, LocalDate.MAX));
+        addMoreIngredients = utils.readString("Do you want to add another ingredient? "
+            + "(yes/no): ").equalsIgnoreCase("yes");
       }
       Recipe recipe = new Recipe(name, description, instruction, ingredients, servings);
       String result = cookBook.addRecipe(recipe);
@@ -350,6 +334,9 @@ public class UserInterface {
 
   }
 
+  /**
+   * Removes a specific recipe by recipe name.
+   */
   public void handleRemoveRecipe() {
     try {
       String name = utils.readString("Type in name of the recipe to remove: ");
@@ -361,6 +348,9 @@ public class UserInterface {
     }
   }
 
+  /**
+   * Checks if a recipe can be made by items/ingredients in the fridge.
+   */
   public void handleCheckRecipe() {
     try {
       String recipeName = utils.readString("Type in recipe name: ");
@@ -370,10 +360,11 @@ public class UserInterface {
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
     }
-
-
   }
 
+  /**
+   * Displays a list og suggestions of recipes based by available ingredients in the fridge.
+   */
   public void handleSuggestRecipe() {
     List<String> suggestions = cookBook.suggestRecipe(foodStorage);
     System.out.println();
