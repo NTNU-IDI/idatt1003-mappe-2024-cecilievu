@@ -306,10 +306,10 @@ public class UserInterface {
       System.out.println();
       System.out.println("Step 1. Writing the recipe");
       System.out.println("----------------------------");
-      String name = utils.readString("Type in name of the new recipe: ");
-      String description = utils.readString("Type in a short description of the recipe: ");
-      String instruction = utils.readString("Type in instructions for recipe: ");
-      int servings = utils.readInt("Type in the number of servings: ");
+      final String name = utils.readString("Type in name of the new recipe: ");
+      final String description = utils.readString("Type in a short description of the recipe: ");
+      final String instruction = utils.readString("Type in instructions for recipe: ");
+      final int servings = utils.readInt("Type in the number of servings: ");
       System.out.println("Step 2. Adding ingredients with its quantity and unit for the recipe:");
       System.out.println("----------------------------------------------------------------------");
 
