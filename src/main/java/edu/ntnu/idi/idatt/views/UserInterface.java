@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+// Hjelp fra *ChatGPT og *Co-pilot
+
 /**
  * Represents the interaction with the user for the "Fridge and CookBook" application. It provides a
  * menu for users to manage the fridge or cookbook, allowing for actions like adding, removing,
@@ -99,7 +101,7 @@ public class UserInterface {
               "Thank you for using the Fridge and Cookbook Manager. See you next time! :)");
           break;
         }
-        actions.get(menuOption.get()).run(); // Runs the chosen action
+        actions.get(menuOption.get()).run(); // Kjører valgt kode
       } else {
         System.out.println("Invalid option, please try again");
       }

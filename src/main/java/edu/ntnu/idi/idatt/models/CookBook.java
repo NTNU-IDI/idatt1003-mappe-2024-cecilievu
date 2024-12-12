@@ -42,7 +42,7 @@ public class CookBook {
    */
   public String expandRecipe(String recipeName) {
     Recipe recipe = findRecipeByName(recipeName);
-    // StringBuilder, endrer innhold uten å opprette nye objekter (mutable)
+    // StringBuilder, endrer innhold uten å opprette nye objekter (mutable), *ChatGPT
     StringBuilder details = new StringBuilder();
     details.append("Recipe name: ").append(recipe.getNameRecipe()).append("\n")
         .append("Recipe description: ").append(recipe.getDescriptionRecipe()).append("\n")
@@ -138,7 +138,7 @@ public class CookBook {
 
   // Ekstra metoder som kan bli gjenbrukt for å finne en oppskrift etter navn eller sjekke om det er
   // nok varer i kjøleskap for å lage en oppskrift.
-  // Hjelp fra ChatGPT
+  // Hjelp fra *ChatGPT
 
   /**
    * Finds a recipe by name (case-insensitive) in the cookbook.

@@ -46,7 +46,7 @@ public class Recipe {
     this.nameRecipe = nameRecipe;
     this.instructionsRecipe = instructionsRecipe;
     this.descriptionRecipe = descriptionRecipe;
-    // Sørger for at listen er immutable, kaster også NullPointException
+    // Sørger for at listen er immutable, kaster også NullPointException *ChatGPT
     this.ingredientsRecipe = List.copyOf(ingredients);
     this.servingsRecipe = servingsRecipe;
   }

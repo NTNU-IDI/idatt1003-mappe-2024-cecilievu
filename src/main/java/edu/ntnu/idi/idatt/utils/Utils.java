@@ -6,6 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
+// Hjelp fra *ChatGPT
+
 /**
  * Utility class that handles users input and displays formatted menu and tables. It provides method
  * for reading integers, doubles, strings and date.

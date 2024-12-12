@@ -8,7 +8,6 @@ import java.time.LocalDate;
  */
 public class Ingredient {
 
-  // Attributes
   private final String nameItem;
   private double quantityItem;
   private final String unitItem;
@@ -68,6 +67,8 @@ public class Ingredient {
   public double getQuantityItem() {
     return quantityItem;
   }
+
+  // Hjelp fra *Co-pilot
 
   /**
    * Updates the quantity of the item. If the quantity is negative, an exception will be thrown.

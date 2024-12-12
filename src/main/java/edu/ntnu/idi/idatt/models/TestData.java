@@ -3,6 +3,11 @@ package edu.ntnu.idi.idatt.models;
 import java.time.LocalDate;
 import java.util.List;
 
+// Hjelp fra *ChatGPT
+
+/**
+ * Represent 'dummy-variables' for ingredients and recipes to make the testing easier.
+ */
 public class TestData {
 
   public static List<Ingredient> getPreDefinedItems() {

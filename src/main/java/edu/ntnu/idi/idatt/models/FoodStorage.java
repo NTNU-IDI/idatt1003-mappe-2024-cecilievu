@@ -24,8 +24,8 @@ public class FoodStorage {
     this.items = new ArrayList<>();
   }
 
-  // Fikk hjelp fra Co-pilot til å endre metodene fra for/each loop til stream hvor det er nødvendig
-  // Dette for å gjøre koden mer robust, kortere og lettere å lese.
+  // Fikk hjelp fra *Co-pilot til å endre metodene fra for/each loop til stream hvor det er
+  // nødvendig. Dette for å gjøre koden mer robust, kortere og lettere å lese.
 
   /**
    * Returns a copy of all items in the fridge. Changes to the returned list do not affect the
@@ -63,7 +63,7 @@ public class FoodStorage {
         newItem.getQuantityItem(), newItem.getUnitItem(), newItem.getNameItem());
   }
 
-  // Hjelp fra ChatGPT
+  // Hjelp fra *ChatGPT
 
   /**
    * Removes a specified quantity of an item from the fridge, starting with the earliest expiry
@@ -113,11 +113,11 @@ public class FoodStorage {
    * @return the item if found, or null if not
    */
   public List<Ingredient> searchItem(String name) {
-    return new ArrayList<>(// 2. gjør den mutable fra toList()
+    return new ArrayList<>(// 2. gjør den mutable fra toList() *ChatGPT
         items.stream()
             .filter(item -> item.getNameItem().equalsIgnoreCase(name))
             .sorted(Comparator.comparing(Ingredient::getBestBefore))
-            .toList() // 1. lager en immutable liste
+            .toList() // 1. lager en immutable liste *ChatGPT
     );
   }
 
