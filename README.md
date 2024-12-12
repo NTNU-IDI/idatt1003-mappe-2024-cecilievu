@@ -29,7 +29,8 @@ https://github.com/NTNU-IDI/idatt1003-mappe-2024-cecilievu
 
 ## How to run the project
 
-To run the project, open the MainApp (use IntelliJ to open) and run the file. This should start the
+To run the project, open the file 'Main' (use IntelliJ to open) and run the file. This should start
+the
 program in the terminal
 with instructions for different menu options.
 
@@ -43,5 +44,6 @@ run test.
 
 ## References
 
-The test classes style is inspired from another student that had the same project last year.
+The README-file and test classes style is inspired from another student that had the same project
+last year.
 https://github.com/SigurSp/2023-IDATT1003-Prog1
