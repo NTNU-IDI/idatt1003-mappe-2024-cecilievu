@@ -72,8 +72,8 @@ public class CookBook {
     if (newRecipe == null) {
       throw new IllegalArgumentException("Recipe cannot be null");
     }
-    if (newRecipe.getNameRecipe() == null || newRecipe.getNameRecipe().isEmpty()) {
-      throw new IllegalArgumentException("Recipe name cannot be null or empty");
+    if (newRecipe.getNameRecipe() == null || newRecipe.getNameRecipe().isBlank()) {
+      throw new IllegalArgumentException("Recipe name cannot be null or blank");
     }
     if (newRecipe.getIngredientsRecipe() == null || newRecipe.getIngredientsRecipe().isEmpty()) {
       throw new IllegalArgumentException("A recipe must at least have one ingredient");

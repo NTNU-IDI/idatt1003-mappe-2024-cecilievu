@@ -36,7 +36,7 @@ public class TestFoodStorage {
 
     @Test
     @DisplayName("addItem() throws IllegalArgumentException for invalid item or quantity")
-    public void testAddItem_throwsExceptionForInvalidItem() {
+    public void testAddItem_throwsException_forInvalidItem() {
       IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
         foodStorage.addItem(null);
       });
@@ -45,7 +45,7 @@ public class TestFoodStorage {
 
     @Test
     @DisplayName("removeItem() returns error if there is not enough items in stock")
-    public void testRemoveItem_returnsErrorIfNotEnoughItems() {
+    public void testRemoveItem_returnsError_ifNotEnoughItems() {
       String result = foodStorage.removeItem("Egg", 20);
       assertTrue(result.contains("Not enough Egg in stock"));
     }

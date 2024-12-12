@@ -46,7 +46,8 @@ public class Recipe {
     this.nameRecipe = nameRecipe;
     this.instructionsRecipe = instructionsRecipe;
     this.descriptionRecipe = descriptionRecipe;
-    this.ingredientsRecipe = List.copyOf(ingredients); // Sørger for at listen er immutable
+    // Sørger for at listen er immutable, kaster også NullPointException
+    this.ingredientsRecipe = List.copyOf(ingredients);
     this.servingsRecipe = servingsRecipe;
   }
 
